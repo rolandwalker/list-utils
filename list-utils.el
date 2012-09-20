@@ -5,10 +5,10 @@
 ;; Author: Roland Walker <walker@pobox.com>
 ;; Homepage: http://github.com/rolandwalker/list-utils
 ;; URL: http://raw.github.com/rolandwalker/list-utils/master/list-utils.el
-;; Version: 0.1.0
-;; Last-Updated: 17 Sep 2012
+;; Version: 0.1.1
+;; Last-Updated: 20 Sep 2012
 ;; EmacsWiki: ListUtils
-;; Keywords:
+;; Keywords: extensions
 ;;
 ;; Simplified BSD License
 ;;
