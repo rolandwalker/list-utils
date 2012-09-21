@@ -131,12 +131,9 @@
 ;;; tconc - this section of code is in the public domain
 
 ;;;###autoload
-(autoload 'make-tconc "list-utils.el")
-
-;;;###autoload
-(autoload 'tconc-p    "list-utils.el")
-
-(defstruct tconc head tail)
+(progn
+  (require 'cl)
+  (defstruct tconc head tail))
 
 ;;;###autoload
 (defun tconc-list (tc list)
