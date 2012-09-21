@@ -5,8 +5,8 @@
 ;; Author: Roland Walker <walker@pobox.com>
 ;; Homepage: http://github.com/rolandwalker/list-utils
 ;; URL: http://raw.github.com/rolandwalker/list-utils/master/list-utils.el
-;; Version: 0.1.1
-;; Last-Updated: 20 Sep 2012
+;; Version: 0.1.2
+;; Last-Updated: 21 Sep 2012
 ;; EmacsWiki: ListUtils
 ;; Keywords: extensions
 ;;
