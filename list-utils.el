@@ -186,50 +186,6 @@ Such a list is using dot notation for the last two elements, eg
       (nthcdr len cell))))
 
 ;;;###autoload
-(defun list-utils-cyclic-length (list)
-  "Return the number of cyclic elements in LIST.
-
-If some portion of LIST is linear, only the cyclic
-elements will be counted.
-
-If LIST is completely linear, return 0."
-  (if (list-utils-cons-cell-p list)
-      0
-    ;;else
-    (let ((fast list)
-          (slow list)
-          (counter 0))
-      (catch 'cycle
-        (while slow
-          (incf counter)
-          (setq slow (cdr slow))
-          (setq fast (cdr (cdr fast)))
-          (when (eq slow list)
-            (throw 'cycle t))
-          (when (eq slow fast)
-            (setq list slow)
-            (setq counter 0)
-            (setq fast nil))))
-      counter)))
-
-;;;###autoload
-(defun list-utils-cyclic-p (list &optional perfect)
-  "Return non-nil if LIST contains any cyclic structures.
-
-If optional PERFECT is set, only return non-nil if LIST is a
-perfect non-branching cycle in the last element points to the
-first."
-  (let ((cycle (list-utils-cyclic-subseq list)))
-    (when (or (not perfect)
-              (not (list-utils-linear-subseq list (list-utils-cyclic-length cycle))))
-        cycle)))
-
-;;;###autoload
-(defun list-utils-linear-p (list)
-  "Return non-nil if LIST is linear (no cyclic structure)."
-  (not (list-utils-cyclic-subseq list)))
-
-;;;###autoload
 (defun list-utils-linear-subseq (list &optional cycle-length)
   "Return the linear elements from a partially cyclic LIST.
 
@@ -279,6 +235,50 @@ If there is no cycle in LIST, return nil."
            (setq slow (cdr slow))
            (when (eq slow fast)
              (throw 'cycle slow))))))))
+
+;;;###autoload
+(defun list-utils-cyclic-length (list)
+  "Return the number of cyclic elements in LIST.
+
+If some portion of LIST is linear, only the cyclic
+elements will be counted.
+
+If LIST is completely linear, return 0."
+  (if (list-utils-cons-cell-p list)
+      0
+    ;;else
+    (let ((fast list)
+          (slow list)
+          (counter 0))
+      (catch 'cycle
+        (while slow
+          (incf counter)
+          (setq slow (cdr slow))
+          (setq fast (cdr (cdr fast)))
+          (when (eq slow list)
+            (throw 'cycle t))
+          (when (eq slow fast)
+            (setq list slow)
+            (setq counter 0)
+            (setq fast nil))))
+      counter)))
+
+;;;###autoload
+(defun list-utils-cyclic-p (list &optional perfect)
+  "Return non-nil if LIST contains any cyclic structures.
+
+If optional PERFECT is set, only return non-nil if LIST is a
+perfect non-branching cycle in the last element points to the
+first."
+  (let ((cycle (list-utils-cyclic-subseq list)))
+    (when (or (not perfect)
+              (not (list-utils-linear-subseq list (list-utils-cyclic-length cycle))))
+        cycle)))
+
+;;;###autoload
+(defun list-utils-linear-p (list)
+  "Return non-nil if LIST is linear (no cyclic structure)."
+  (not (list-utils-cyclic-subseq list)))
 
 ;;;###autoload
 (defun list-utils-safe-length (list)
