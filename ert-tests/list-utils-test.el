@@ -68,6 +68,29 @@
              (list-utils-cons-cell-p '(1 2 3 4 5 . 6)))))
 
 
+;;; list-utils-make-proper
+
+(ert-deftest list-utils-make-proper-01 nil
+  (should (equal '(a b c d e f)
+                 (list-utils-make-proper '(a b c d e f)))))
+
+(ert-deftest list-utils-make-proper-02 nil
+  (should-not
+   (list-utils-make-proper nil)))
+
+(ert-deftest list-utils-make-proper-03 nil
+  (should-error
+   (list-utils-make-proper 1)))
+
+(ert-deftest list-utils-make-proper-04 nil
+  (should (equal '(1 2)
+                 (list-utils-make-proper '(1 . 2)))))
+
+(ert-deftest list-utils-make-proper-05 nil
+  (should (equal '(1 2 3 4 5 6)
+                 (list-utils-make-proper '(1 2 3 4 5 . 6)))))
+
+
 ;;; list-utils-cyclic-length
 
 (ert-deftest list-utils-cyclic-length-01 nil

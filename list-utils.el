@@ -52,6 +52,7 @@
 ;;     `list-utils-cons-cell-p'
 ;;     `list-utils-cyclic-length'
 ;;     `list-utils-improper-p'
+;;     `list-utils-make-proper'
 ;;     `list-utils-linear-p'
 ;;     `list-utils-linear-subseq'
 ;;     `list-utils-cyclic-p'
@@ -190,6 +191,17 @@ Such improper lists are produced by `list*'."
                (> len 0)
                (not (listp (nthcdr len cell))))
       (nthcdr len cell))))
+
+;;;###autoload
+(defun list-utils-make-proper (list)
+  "Make a cons cell or improper LIST into a proper list.
+
+Improper lists consist of proper lists consed onto a final
+element, and are produced by `list*'."
+  (assert (listp list) nil "LIST is not a list")
+  (when (list-utils-cons-cell-p list)
+    (callf list (nthcdr (safe-length list) list)))
+  list)
 
 ;;;###autoload
 (defun list-utils-linear-subseq (list &optional cycle-length)
