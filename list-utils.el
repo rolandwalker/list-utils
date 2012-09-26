@@ -436,7 +436,7 @@ This functionality overlaps with the undocumented `cl-do-remf'."
     (when (and prop-pos
                (= 0 (% prop-pos 2)))
       (callf cddr (nthcdr prop-pos plist))))
-    plist)
+  plist)
 
 (provide 'list-utils)
 
