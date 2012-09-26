@@ -178,9 +178,12 @@ next cons cell, eg
 
 In addition, a list which is not nil-terminated is not a proper
 list and will be recognized by this function as a cons cell.
-Such a list is using dot notation for the last two elements, eg
+Such a list is printed using dot notation for the last two
+elements, eg
 
-    '(1 2 3 4 . 5)"
+    '(1 2 3 4 . 5)
+
+Such improper lists are produced by `list*'."
   (let ((len (safe-length cell)))
     (when (and (consp cell)
                (> len 0)
