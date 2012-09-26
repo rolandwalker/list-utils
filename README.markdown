@@ -42,6 +42,7 @@ The following functions are provided:
 	tconc
 	list-utils-cons-cell-p
 	list-utils-cyclic-length
+	list-utils-improper-p
 	list-utils-linear-p
 	list-utils-linear-subseq
 	list-utils-cyclic-p

@@ -51,6 +51,7 @@
 ;;     `tconc'
 ;;     `list-utils-cons-cell-p'
 ;;     `list-utils-cyclic-length'
+;;     `list-utils-improper-p'
 ;;     `list-utils-linear-p'
 ;;     `list-utils-linear-subseq'
 ;;     `list-utils-cyclic-p'
@@ -284,6 +285,9 @@ first."
 (defun list-utils-linear-p (list)
   "Return non-nil if LIST is linear (no cyclic structure)."
   (not (list-utils-cyclic-subseq list)))
+
+;;;###autoload
+(defalias 'list-utils-improper-p 'list-utils-cons-cell-p)
 
 ;;;###autoload
 (defun list-utils-safe-length (list)
