@@ -128,6 +128,8 @@
 ;; for defstruct, assert, setf, callf
 (require 'cl)
 
+(declare-function list-utils-cyclic-length "list-utils.el")
+
 ;;; tconc - this section of code is in the public domain
 
 ;;;###autoload
