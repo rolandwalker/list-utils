@@ -432,7 +432,7 @@ This functionality overlaps with the undocumented `cl-do-remf'."
   (let ((prop-pos (position prop plist)))
     (when (and prop-pos
                (= 0 (% prop-pos 2)))
-      (setf (nthcdr prop-pos plist) (nthcdr (+ 2 prop-pos) plist))))
+      (callf cddr (nthcdr prop-pos plist))))
     plist)
 
 (provide 'list-utils)
