@@ -8,17 +8,19 @@ List-manipulation utility functions for Emacs.
 Quickstart
 ----------
 
-	(require 'list-utils)
-
-	(list-utils-flatten '(1 2 (3 4 (5 6 7))))
-
-	(let ((cyclic-list '(1 2 3 4 5 6 7)))
-	  (nconc cyclic-list (cdr cyclic-list))
-	  (list-utils-flatten cyclic-list))
-
-	(list-utils-cyclic-p '(1 2 3))
-
-	(list-utils-plist-del '(:one 1 :two 2 :three 3) :two)
+```lisp
+(require 'list-utils)
+ 
+(list-utils-flatten '(1 2 (3 4 (5 6 7))))
+ 
+(let ((cyclic-list '(1 2 3 4 5 6 7)))
+  (nconc cyclic-list (cdr cyclic-list))
+  (list-utils-flatten cyclic-list))
+ 
+(list-utils-cyclic-p '(1 2 3))
+ 
+(list-utils-plist-del '(:one 1 :two 2 :three 3) :two)
+```
 
 list-utils
 ----------
