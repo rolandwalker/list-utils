@@ -3,7 +3,7 @@
 Overview
 ========
 
-List-manipulation utility functions for Emacs
+List-manipulation utility functions for Emacs.
 
 Quickstart
 ----------
