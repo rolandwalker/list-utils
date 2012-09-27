@@ -1,3 +1,5 @@
+[![Build Status](https://secure.travis-ci.org/rolandwalker/list-utils.png)](http://travis-ci.org/rolandwalker/list-utils)
+
 Overview
 ========
 
