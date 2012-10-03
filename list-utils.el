@@ -325,7 +325,10 @@ first."
 
 LIST may be linear or cyclic.
 
-If LIST is not really a list, returns 0."
+If LIST is not really a list, returns 0.
+
+If LIST is an improper list, return the number of proper list
+elements, like `safe-length'."
   (if (not (listp list))
       0
     ;; else
