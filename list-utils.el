@@ -53,6 +53,7 @@
 ;;     `list-utils-cyclic-length'
 ;;     `list-utils-improper-p'
 ;;     `list-utils-make-proper'
+;;     `list-utils-make-improper'
 ;;     `list-utils-linear-p'
 ;;     `list-utils-linear-subseq'
 ;;     `list-utils-cyclic-p'
@@ -89,6 +90,8 @@
 ;; Bugs
 ;;
 ;; TODO
+;;
+;;     should list-utils-make-improper accept nil as a special case?
 ;;
 ;;; License
 ;;
@@ -204,6 +207,18 @@ element, and are produced by `list*'."
   (assert (listp list) nil "LIST is not a list")
   (when (list-utils-cons-cell-p list)
     (callf list (nthcdr (safe-length list) list)))
+  list)
+
+;;;###autoload
+(defun list-utils-make-improper (list)
+  "Make proper LIST into an improper list.
+
+Improper lists consist of proper lists consed onto a final
+element, and are produced by `list*'."
+  (assert (listp list) nil "LIST is not a list")
+  (unless (list-utils-cons-cell-p list)
+    (assert (> (safe-length list) 1) nil "LIST has only one element")
+    (setcdr (last list 2) (car (last list))))
   list)
 
 ;;;###autoload

@@ -48,6 +48,7 @@ The following functions are provided:
 	list-utils-cyclic-length
 	list-utils-improper-p
 	list-utils-make-proper
+	list-utils-make-improper
 	list-utils-linear-p
 	list-utils-linear-subseq
 	list-utils-cyclic-p

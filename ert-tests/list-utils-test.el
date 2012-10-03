@@ -91,6 +91,33 @@
                  (list-utils-make-proper '(1 2 3 4 5 . 6)))))
 
 
+;;; list-utils-make-improper
+
+(ert-deftest list-utils-make-improper-01 nil
+  (should (equal '(a b c d e . f)
+                 (list-utils-make-improper '(a b c d e f)))))
+
+(ert-deftest list-utils-make-improper-02 nil
+  (should-error
+   (list-utils-make-improper nil)))
+
+(ert-deftest list-utils-make-improper-03 nil
+  (should-error
+   (list-utils-make-improper 1)))
+
+(ert-deftest list-utils-make-improper-04 nil
+  (should (equal '(1 . 2)
+                 (list-utils-make-improper '(1 . 2)))))
+
+(ert-deftest list-utils-make-improper-05 nil
+  (should (equal '(1 2 3 4 5 . 6)
+                 (list-utils-make-improper '(1 2 3 4 5 . 6)))))
+
+(ert-deftest list-utils-make-improper-06 nil
+  (should-error
+   (list-utils-make-improper '(1))))
+
+
 ;;; list-utils-cyclic-length
 
 (ert-deftest list-utils-cyclic-length-01 nil
