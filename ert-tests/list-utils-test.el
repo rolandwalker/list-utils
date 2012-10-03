@@ -138,6 +138,15 @@
                (nconc cyclic (last cyclic))
                (list-utils-cyclic-length cyclic)))))
 
+(ert-deftest list-utils-cyclic-length-04 nil
+  (should (= 0
+             (list-utils-cyclic-length (cons 1 2)))))
+
+(ert-deftest list-utils-cyclic-length-05 nil
+  (should (= 0
+             (list-utils-cyclic-length (list* 1 2 3)))))
+
+
 ;;; list-utils-cyclic-subseq
 
 (ert-deftest list-utils-cyclic-subseq-01 nil
@@ -171,6 +180,14 @@
 (ert-deftest list-utils-cyclic-subseq-06 nil
   (should-not
    (list-utils-cyclic-subseq nil)))
+
+(ert-deftest list-utils-cyclic-subseq-07 nil
+  (should-not
+   (list-utils-cyclic-subseq (cons 1 2))))
+
+(ert-deftest list-utils-cyclic-subseq-08 nil
+  (should-not
+   (list-utils-cyclic-subseq (list* 1 2 3))))
 
 
 ;;; list-utils-cyclic-p
@@ -213,6 +230,14 @@
   (should-not
    (list-utils-cyclic-p nil)))
 
+(ert-deftest list-utils-cyclic-p-08 nil
+  (should-not
+   (list-utils-cyclic-p (cons 1 2))))
+
+(ert-deftest list-utils-cyclic-p-09 nil
+  (should-not
+   (list-utils-cyclic-p (list* 1 2 3))))
+
 
 ;;; list-utils-linear-p
 
@@ -242,6 +267,14 @@
   (should
    (list-utils-linear-p nil)))
 
+(ert-deftest list-utils-linear-p-06 nil
+  (should
+   (list-utils-linear-p (cons 1 2))))
+
+(ert-deftest list-utils-linear-p-07 nil
+  (should
+   (list-utils-linear-p (list* 1 2 3))))
+
 
 ;;; list-utils-linear-subseq
 
@@ -262,6 +295,17 @@
                  (let ((cyclic '(a b c d e f g h)))
                    (nconc cyclic (last cyclic))
                    (list-utils-linear-subseq cyclic)))))
+
+(ert-deftest list-utils-linear-subseq-04 nil
+  (let ((improper (cons 1 2)))
+    (should (equal improper
+                   (list-utils-linear-subseq improper)))))
+
+(ert-deftest list-utils-linear-subseq-05 nil
+  (let ((improper (list* 1 2 3)))
+    (should (equal improper
+                   (list-utils-linear-subseq (list* 1 2 3))))))
+
 
 ;;; list-utils-safe-length
 
@@ -296,6 +340,14 @@
   (should (= 0
              (list-utils-safe-length :not-a-list))))
 
+(ert-deftest list-utils-safe-length-07 nil
+  (should (= 1
+             (list-utils-safe-length (cons 1 2)))))
+
+(ert-deftest list-utils-safe-length-08 nil
+  (should (= 2
+             (list-utils-safe-length (list* 1 2 3)))))
+
 
 ;;; list-utils-flatten
 
@@ -321,6 +373,10 @@
                    (nconc cyclic (cdr cyclic))
                    (list-utils-flatten cyclic)))))
 
+(ert-deftest list-utils-flatten-06 nil
+  (should (equal '(1 2)
+   (list-utils-flatten (cons 1 2)))))
+
 
 ;;; list-utils-alist-flatten
 
@@ -339,6 +395,10 @@
 (ert-deftest list-utils-alist-flatten-04 nil
   (should (equal '((1 . 2) (3 . 4) (5 . 6) (7 . 8))
                  (list-utils-alist-flatten '(((1 . 2) (3 . 4)) ((5 . 6) (7 . 8)))))))
+
+(ert-deftest list-utils-alist-flatten-05 nil
+  (should (equal (cons 1 2)
+                 (list-utils-alist-flatten (cons 1 2)))))
 
 
 ;;; list-utils-insert-before
@@ -359,6 +419,22 @@
   (should-error
    (list-utils-insert-before '(1 2 3 4 5) 6 'elt)))
 
+(ert-deftest list-utils-insert-before-05 nil
+  (should (equal (list* 'elt 1 2)
+             (list-utils-insert-before (cons 1 2) 1 'elt))))
+
+(ert-deftest list-utils-insert-before-06 nil
+  (should (equal (list* 1 'elt 2)
+                 (list-utils-insert-before (cons 1 2) 2 'elt))))
+
+(ert-deftest list-utils-insert-before-07 nil
+  (should (equal (list* 1 'elt 2 3)
+                 (list-utils-insert-before (list* 1 2 3) 2 'elt))))
+
+(ert-deftest list-utils-insert-before-08 nil
+  (should (equal (list* 1 2 'elt 3)
+                 (list-utils-insert-before (list* 1 2 3) 3 'elt))))
+
 
 ;;; list-utils-insert-after
 
@@ -377,6 +453,22 @@
 (ert-deftest list-utils-insert-after-04 nil
   (should-error
    (list-utils-insert-after '(1 2 3 4 5) 6 'elt)))
+
+(ert-deftest list-utils-insert-after-05 nil
+  (should (equal (list* 1 'elt 2)
+                 (list-utils-insert-after (cons 1 2) 1 'elt))))
+
+(ert-deftest list-utils-insert-after-06 nil
+  (should (equal (list* 1 2 'elt)
+                 (list-utils-insert-after (cons 1 2) 2 'elt))))
+
+(ert-deftest list-utils-insert-after-07 nil
+  (should (equal (list* 1 2 'elt 3)
+                 (list-utils-insert-after (list* 1 2 3) 2 'elt))))
+
+(ert-deftest list-utils-insert-after-08 nil
+  (should (equal (list* 1 2 3 'elt)
+                 (list-utils-insert-after (list* 1 2 3) 3 'elt))))
 
 
 ;;; list-utils-insert-before-pos
@@ -397,6 +489,30 @@
   (should-error
    (list-utils-insert-before-pos '(a b c d e) 5 'elt)))
 
+(ert-deftest list-utils-insert-before-pos-05 nil
+  (should (equal (list* 'elt 1 2)
+                 (list-utils-insert-before-pos (cons 1 2) 0 'elt))))
+
+(ert-deftest list-utils-insert-before-pos-06 nil
+  (should (equal (list* 1 'elt 2)
+                 (list-utils-insert-before-pos (cons 1 2) 1 'elt))))
+
+(ert-deftest list-utils-insert-before-pos-07 nil
+  (should-error
+   (list-utils-insert-before-pos (cons 1 2) 2 'elt)))
+
+(ert-deftest list-utils-insert-before-pos-08 nil
+  (should (equal (list* 1 'elt 2 3)
+                 (list-utils-insert-before-pos (list* 1 2 3) 1 'elt))))
+
+(ert-deftest list-utils-insert-before-pos-09 nil
+  (should (equal (list* 1 2 'elt 3)
+                 (list-utils-insert-before-pos (list* 1 2 3) 2 'elt))))
+
+(ert-deftest list-utils-insert-before-pos-10 nil
+  (should-error
+   (list-utils-insert-before-pos (list* 1 2 3) 3 'elt)))
+
 
 ;;; list-utils-insert-after-pos
 
@@ -415,6 +531,30 @@
 (ert-deftest list-utils-insert-after-pos-04 nil
   (should-error
    (list-utils-insert-after-pos '(a b c d e) 5 'elt)))
+
+(ert-deftest list-utils-insert-after-pos-05 nil
+  (should (equal (list* 1 'elt 2)
+                 (list-utils-insert-after-pos (cons 1 2) 0 'elt))))
+
+(ert-deftest list-utils-insert-after-pos-06 nil
+  (should (equal (list* 1 2 'elt)
+                 (list-utils-insert-after-pos (cons 1 2) 1 'elt))))
+
+(ert-deftest list-utils-insert-after-pos-07 nil
+  (should-error
+   (list-utils-insert-after-pos (cons 1 2) 2 'elt)))
+
+(ert-deftest list-utils-insert-after-pos-08 nil
+  (should (equal (list* 1 2 'elt 3)
+                 (list-utils-insert-after-pos (list* 1 2 3) 1 'elt))))
+
+(ert-deftest list-utils-insert-after-pos-09 nil
+  (should (equal (list* 1 2 3 'elt)
+                 (list-utils-insert-after-pos (list* 1 2 3) 2 'elt))))
+
+(ert-deftest list-utils-insert-after-pos-10 nil
+  (should-error
+   (list-utils-insert-after-pos (list* 1 2 3) 3 'elt)))
 
 
 ;;; list-utils-plist-reverse

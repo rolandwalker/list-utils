@@ -331,7 +331,7 @@ If LIST is not really a list, returns 0."
     ;; else
     (let ((cycle-length (list-utils-cyclic-length list)))
       (+ cycle-length
-         (length (list-utils-linear-subseq list cycle-length))))))
+         (safe-length (list-utils-linear-subseq list cycle-length))))))
 
 ;;;###autoload
 (defun list-utils-flatten (list)
@@ -366,9 +366,15 @@ flattens circular list structures."
   "Look in LIST for ELEMENT and insert NEW-ELEMENT before it.
 
 LIST is modified and the new value is returned."
-  (let ((pos (position element list)))
+  (let ((improper (list-utils-improper-p list))
+        (pos nil))
+    (when improper
+      (callf list-utils-make-proper list))
+    (setq pos (position element list))
     (assert pos nil "Element not found: %s" element)
-    (push new-element (nthcdr pos list)))
+    (push new-element (nthcdr pos list))
+    (when improper
+      (callf list-utils-make-improper list)))
   list)
 
 ;;;###autoload
@@ -376,9 +382,15 @@ LIST is modified and the new value is returned."
   "Look in LIST for ELEMENT and insert NEW-ELEMENT after it.
 
 LIST is modified and the new value is returned."
-  (let ((pos (position element list)))
+  (let ((improper (list-utils-improper-p list))
+        (pos nil))
+    (when improper
+      (callf list-utils-make-proper list))
+    (setq pos (position element list))
     (assert pos nil "Element not found: %s" element)
-    (push new-element (cdr (nthcdr pos list))))
+    (push new-element (cdr (nthcdr pos list)))
+    (when improper
+      (callf list-utils-make-improper list)))
   list)
 
 ;;;###autoload
@@ -388,11 +400,16 @@ LIST is modified and the new value is returned."
 POS is zero-indexed.
 
 LIST is modified and the new value is returned."
-  (assert (and (integerp pos)
-               (>= pos 0)
-               (< pos (length list))) nil "No such position %s" pos)
-  (push new-element
-        (nthcdr pos list))
+  (let ((improper (list-utils-improper-p list)))
+    (when improper
+      (callf list-utils-make-proper list))
+    (assert (and (integerp pos)
+                 (>= pos 0)
+                 (< pos (length list))) nil "No such position %s" pos)
+    (push new-element
+          (nthcdr pos list))
+    (when improper
+      (callf list-utils-make-improper list)))
   list)
 
 ;;;###autoload
@@ -400,11 +417,16 @@ LIST is modified and the new value is returned."
   "Look in LIST for position POS, and insert NEW-ELEMENT after.
 
 LIST is modified and the new value is returned."
-  (assert (and (integerp pos)
-               (>= pos 0)
-               (< pos (length list))) nil "No such position %s" pos)
-  (push new-element
-        (cdr (nthcdr pos list)))
+  (let ((improper (list-utils-improper-p list)))
+    (when improper
+      (callf list-utils-make-proper list))
+    (assert (and (integerp pos)
+                 (>= pos 0)
+                 (< pos (length list))) nil "No such position %s" pos)
+    (push new-element
+          (cdr (nthcdr pos list)))
+    (when improper
+      (callf list-utils-make-improper list)))
   list)
 
 ;;; alists
