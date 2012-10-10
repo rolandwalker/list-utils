@@ -138,6 +138,14 @@
 
 (declare-function list-utils-cyclic-length "list-utils.el")
 
+;;;###autoload
+(defgroup list-utils nil
+  "List-manipulation utility functions."
+  :version "0.2.0"
+  :link '(emacs-commentary-link "list-utils")
+  :prefix "list-utils-"
+  :group 'extensions)
+
 ;;; tconc - this section of code is in the public domain
 
 ;;;###autoload
