@@ -67,7 +67,9 @@ The following functions are provided:
 To use list-utils, place the list-utils.el library somewhere
 Emacs can find it, and add the following to your ~/.emacs file:
 
-	(require 'list-utils)
+```lisp
+(require 'list-utils)
+```
 
 Notes
 -----

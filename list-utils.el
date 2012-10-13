@@ -367,7 +367,7 @@ lists, returns 1."
 
 ;;;###autoload
 (defun list-utils-flatten (list)
-  "Flatten LIST which may contain other lists.
+  "Flatten LIST, which may contain other lists.
 
 This function flattens cons cells as lists, and
 flattens circular list structures."
@@ -465,7 +465,7 @@ LIST is modified and the new value is returned."
 
 ;;;###autoload
 (defun list-utils-alist-flatten (list)
-  "Flatten LIST which may contain other lists.  Do not flatten cons cells.
+  "Flatten LIST, which may contain other lists.  Do not flatten cons cells.
 
 It is not guaranteed that the result contains *only* cons cells.
 The result could contain other data types present in LIST.
