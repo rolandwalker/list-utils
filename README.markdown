@@ -54,6 +54,7 @@ The following functions are provided:
 	list-utils-cyclic-p
 	list-utils-cyclic-subseq
 	list-utils-safe-length
+	list-utils-depth
 	list-utils-flatten
 	list-utils-alist-flatten
 	list-utils-insert-before

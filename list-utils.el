@@ -59,6 +59,7 @@
 ;;     `list-utils-cyclic-p'
 ;;     `list-utils-cyclic-subseq'
 ;;     `list-utils-safe-length'
+;;     `list-utils-depth'
 ;;     `list-utils-flatten'
 ;;     `list-utils-alist-flatten'
 ;;     `list-utils-insert-before'
@@ -343,6 +344,26 @@ elements, like `safe-length'."
     (let ((cycle-length (list-utils-cyclic-length list)))
       (+ cycle-length
          (safe-length (list-utils-linear-subseq list cycle-length))))))
+
+;;;###autoload
+(defun list-utils-depth (list)
+  "Find the depth of LIST, which may contain other lists.
+
+If LIST is not a list, returns 0.
+
+If LIST is a cons cell or a list which does not contain other
+lists, returns 1."
+  (when (and (listp list)
+             (list-utils-cyclic-subseq list))
+    (setq list (subseq list 0 (list-utils-safe-length list))))
+  (cond
+    ((or (not (listp list))
+         (null list))
+     0)
+    ((list-utils-cons-cell-p list)
+     (+ 1 (apply 'max (mapcar 'list-utils-depth (list-utils-make-proper list)))))
+    (t
+     (+ 1 (apply 'max (mapcar 'list-utils-depth list))))))
 
 ;;;###autoload
 (defun list-utils-flatten (list)

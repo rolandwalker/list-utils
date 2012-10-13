@@ -378,6 +378,63 @@
    (list-utils-flatten (cons 1 2)))))
 
 
+;;; list-utils-depth
+
+(ert-deftest list-utils-depth-01 nil
+  (should
+   (= 0
+      (list-utils-depth nil))))
+
+(ert-deftest list-utils-depth-02 nil
+  (should
+   (= 0
+      (list-utils-depth "not a list"))))
+
+(ert-deftest list-utils-depth-03 nil
+  (should
+   (= 1
+      (list-utils-depth '(1 2 3)))))
+
+(ert-deftest list-utils-depth-04 nil
+  (should
+   (= 1
+      (list-utils-depth (cons 1 2)))))
+
+(ert-deftest list-utils-depth-05 nil
+  (should
+   (= 3
+      (list-utils-depth '(a b c (d e (f)))))))
+
+(ert-deftest list-utils-depth-06 nil
+  (should
+   (= 3
+      (list-utils-depth '(a nil b nil c nil (d nil e nil (f nil) nil) nil)))))
+
+(ert-deftest list-utils-depth-07 nil
+  (should
+   (= 1
+      (list-utils-depth '(1 2 3 4 . 5)))))
+
+(ert-deftest list-utils-depth-08 nil
+  (should
+   (= 2
+      (list-utils-depth '(1 2 3 (4 . 5))))))
+
+(ert-deftest list-utils-depth-09 nil
+  (should
+   (= 1
+      (let ((cyclic '(1 2 3 4 5)))
+        (nconc cyclic (cdr cyclic))
+        (list-utils-depth cyclic)))))
+
+(ert-deftest list-utils-depth-10 nil
+  (should
+   (= 2
+      (let ((cyclic '(1 2 3 (4 5))))
+        (nconc cyclic (cdr cyclic))
+        (list-utils-depth cyclic)))))
+
+
 ;;; list-utils-alist-flatten
 
 (ert-deftest list-utils-alist-flatten-01 nil
