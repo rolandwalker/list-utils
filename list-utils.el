@@ -349,10 +349,11 @@ elements, like `safe-length'."
 (defun list-utils-depth (list)
   "Find the depth of LIST, which may contain other lists.
 
-If LIST is not a list, returns 0.
+If LIST is not a list or is an empty list, returns a depth
+of 0.
 
 If LIST is a cons cell or a list which does not contain other
-lists, returns 1."
+lists, returns a depth of 1."
   (when (and (listp list)
              (list-utils-cyclic-subseq list))
     (setq list (subseq list 0 (list-utils-safe-length list))))
