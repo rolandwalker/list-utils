@@ -5,8 +5,8 @@
 ;; Author: Roland Walker <walker@pobox.com>
 ;; Homepage: http://github.com/rolandwalker/list-utils
 ;; URL: http://raw.github.com/rolandwalker/list-utils/master/list-utils.el
-;; Version: 0.2.2
-;; Last-Updated: 13 Oct 2012
+;; Version: 0.2.4
+;; Last-Updated: 22 Oct 2012
 ;; EmacsWiki: ListUtils
 ;; Keywords: extensions
 ;;
@@ -145,7 +145,7 @@
 ;;;###autoload
 (defgroup list-utils nil
   "List-manipulation utility functions."
-  :version "0.2.2"
+  :version "0.2.4"
   :link '(emacs-commentary-link "list-utils")
   :prefix "list-utils-"
   :group 'extensions)
