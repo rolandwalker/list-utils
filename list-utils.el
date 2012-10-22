@@ -133,10 +133,12 @@
 ;;; Code:
 ;;
 
-;;; requires
+;;; requirements
 
 ;; for defstruct, assert, setf, callf
 (require 'cl)
+
+;;; declarations
 
 (declare-function list-utils-cyclic-length "list-utils.el")
 
