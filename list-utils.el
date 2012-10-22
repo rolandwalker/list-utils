@@ -213,7 +213,9 @@ Such improper lists are produced by `list*'."
   "Make a cons cell or improper LIST into a proper list.
 
 Improper lists consist of proper lists consed onto a final
-element, and are produced by `list*'."
+element, and are produced by `list*'.
+
+Modifies LIST and returns the modified value."
   (assert (listp list) nil "LIST is not a list")
   (when (list-utils-cons-cell-p list)
     (callf list (nthcdr (safe-length list) list)))
@@ -224,7 +226,9 @@ element, and are produced by `list*'."
   "Make proper LIST into an improper list.
 
 Improper lists consist of proper lists consed onto a final
-element, and are produced by `list*'."
+element, and are produced by `list*'.
+
+Modifies LIST and returns the modified value."
   (assert (listp list) nil "LIST is not a list")
   (unless (list-utils-cons-cell-p list)
     (assert (> (safe-length list) 1) nil "LIST has only one element")
@@ -363,7 +367,7 @@ lists, returns a depth of 1."
          (null list))
      0)
     ((list-utils-cons-cell-p list)
-     (+ 1 (apply 'max (mapcar 'list-utils-depth (list-utils-make-proper list)))))
+     (+ 1 (apply 'max (mapcar 'list-utils-depth (list-utils-make-proper (copy-tree list))))))
     (t
      (+ 1 (apply 'max (mapcar 'list-utils-depth list))))))
 

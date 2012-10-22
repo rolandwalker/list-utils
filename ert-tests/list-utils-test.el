@@ -434,6 +434,13 @@
         (nconc cyclic (cdr cyclic))
         (list-utils-depth cyclic)))))
 
+(ert-deftest list-utils-depth-11 nil
+  (let* ((value '(a nil (b . 1) nil (c 2 . 3) nil (d nil e nil (f nil) nil) nil))
+         (copy (copy-tree value)))
+    (list-utils-depth value)
+    (should
+     (equal value copy))))
+
 
 ;;; list-utils-alist-flatten
 
