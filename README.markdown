@@ -22,8 +22,8 @@ Quickstart
 (list-utils-plist-del '(:one 1 :two 2 :three 3) :two)
 ```
 
-list-utils
-----------
+Explanation
+-----------
 
 List-utils is a collection of functions for list manipulation.
 This library has no user-level interface; it is only useful
