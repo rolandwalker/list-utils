@@ -146,6 +146,12 @@
   (should (= 0
              (list-utils-cyclic-length (list* 1 2 3)))))
 
+(ert-deftest list-utils-cyclic-length-06 nil
+  (let ((cyclic '(1)))
+    (nconc cyclic cyclic)
+    (should (= 1
+               (list-utils-cyclic-length cyclic)))))
+
 
 ;;; list-utils-cyclic-subseq
 
@@ -188,6 +194,13 @@
 (ert-deftest list-utils-cyclic-subseq-08 nil
   (should-not
    (list-utils-cyclic-subseq (list* 1 2 3))))
+
+(ert-deftest list-utils-cyclic-subseq-09 nil
+  (let ((cyclic '(1)))
+    (nconc cyclic cyclic)
+    (should (equal '(1)
+                   (list-utils-flatten (list-utils-cyclic-subseq cyclic))))))
+
 
 
 ;;; list-utils-cyclic-p
@@ -238,6 +251,12 @@
   (should-not
    (list-utils-cyclic-p (list* 1 2 3))))
 
+(ert-deftest list-utils-cyclic-p-10 nil
+  (should
+   (let ((cyclic '(1)))
+     (nconc cyclic cyclic)
+     (list-utils-cyclic-p cyclic))))
+
 
 ;;; list-utils-linear-p
 
@@ -275,6 +294,12 @@
   (should
    (list-utils-linear-p (list* 1 2 3))))
 
+(ert-deftest list-utils-linear-p-08 nil
+  (let ((cyclic '(1)))
+    (nconc cyclic cyclic)
+    (should-not
+     (list-utils-linear-p cyclic))))
+
 
 ;;; list-utils-linear-subseq
 
@@ -305,6 +330,12 @@
   (let ((improper (list* 1 2 3)))
     (should (equal improper
                    (list-utils-linear-subseq (list* 1 2 3))))))
+
+(ert-deftest list-utils-linear-subseq-06 nil
+  (let ((cyclic '(1)))
+    (nconc cyclic cyclic)
+    (should-not
+     (list-utils-linear-subseq cyclic))))
 
 
 ;;; list-utils-safe-length
@@ -348,6 +379,12 @@
   (should (= 2
              (list-utils-safe-length (list* 1 2 3)))))
 
+(ert-deftest list-utils-safe-length-09 nil
+  (let ((cyclic '(1)))
+    (nconc cyclic cyclic)
+    (should (= 1
+               (list-utils-safe-length cyclic)))))
+
 
 ;;; list-utils-flatten
 
@@ -376,6 +413,12 @@
 (ert-deftest list-utils-flatten-06 nil
   (should (equal '(1 2)
    (list-utils-flatten (cons 1 2)))))
+
+(ert-deftest list-utils-flatten-07 nil
+  (let ((cyclic '(1)))
+    (nconc cyclic cyclic)
+    (should (equal '(1)
+                   (list-utils-flatten cyclic)))))
 
 
 ;;; list-utils-depth
@@ -440,6 +483,12 @@
     (list-utils-depth value)
     (should
      (equal value copy))))
+
+(ert-deftest list-utils-depth-12 nil
+  (let ((cyclic '(1)))
+    (nconc cyclic cyclic)
+    (should (= 1
+               (list-utils-depth cyclic)))))
 
 
 ;;; list-utils-alist-flatten
