@@ -58,6 +58,7 @@
 ;;     `list-utils-linear-subseq'
 ;;     `list-utils-cyclic-p'
 ;;     `list-utils-cyclic-subseq'
+;;     `list-utils-make-linear-copy'
 ;;     `list-utils-safe-length'
 ;;     `list-utils-depth'
 ;;     `list-utils-flatten'
@@ -353,6 +354,21 @@ elements, like `safe-length'."
          (safe-length (list-utils-linear-subseq list cycle-length))))))
 
 ;;;###autoload
+(defun list-utils-make-linear-copy (list &optional tree)
+  "Return a linearized copy of LIST, which may be cyclic.
+
+If optional TREE is non-nil, traverse LIST, substituting
+linearized copies of any cyclic lists contained within."
+  (cond
+    ((not tree)
+     (subseq list 0 (list-utils-safe-length list)))
+    ((consp list)
+     (mapcar #'(lambda (elt)
+                 (list-utils-make-linear-copy elt 'tree))
+             (list-utils-make-linear-copy list)))
+    (t
+     list)))
+
 (defun list-utils-depth (list)
   "Find the depth of LIST, which may contain other lists.
 
@@ -367,7 +383,7 @@ lists, returns a depth of 1."
      0)
     ((and (listp list)
           (list-utils-cyclic-p list))
-     (list-utils-depth (subseq list 0 (list-utils-safe-length list))))
+     (list-utils-depth (list-utils-make-linear-copy list)))
     ((list-utils-cons-cell-p list)
      (+ 1 (apply 'max (mapcar 'list-utils-depth (list-utils-make-proper (copy-tree list))))))
     (t
@@ -387,7 +403,7 @@ flattens circular list structures."
 
     ((and (listp list)
           (list-utils-cyclic-p list))
-     (list-utils-flatten (subseq list 0 (list-utils-safe-length list))))
+     (list-utils-flatten (list-utils-make-linear-copy list)))
 
     ((and (listp list)
           (consp (car list)))
@@ -489,7 +505,7 @@ pair."
 
     ((and (listp list)
           (list-utils-cyclic-p list))
-     (list-utils-alist-flatten (subseq list 0 (list-utils-safe-length list))))
+     (list-utils-alist-flatten (list-utils-make-linear-copy list)))
 
     ((list-utils-cons-cell-p list)
      list)

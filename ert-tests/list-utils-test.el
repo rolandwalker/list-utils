@@ -386,6 +386,78 @@
                (list-utils-safe-length cyclic)))))
 
 
+;;; list-utils-make-linear-copy
+
+(ert-deftest list-utils-make-linear-copy-01 nil
+  (let* ((value '(1 2 3 4 5))
+         (cyclic (copy-tree value)))
+    (nconc cyclic cyclic)
+    (should
+     (equal value
+            (list-utils-make-linear-copy cyclic)))))
+
+(ert-deftest list-utils-make-linear-copy-02 nil
+  (let* ((value '(1 2 3 4 5))
+         (cyclic (copy-tree value)))
+    (nconc cyclic (cdr cyclic))
+    (should
+     (equal value
+            (list-utils-make-linear-copy cyclic)))))
+
+(ert-deftest list-utils-make-linear-copy-03 nil
+  (let* ((value '(1 2 3 (4 (5 6))))
+         (cyclic (copy-tree value)))
+    (nconc cyclic (cdr cyclic))
+    (should
+     (equal value
+            (list-utils-make-linear-copy cyclic)))))
+
+
+(ert-deftest list-utils-make-linear-copy-05 nil
+  "With 'tree"
+  (let* ((value '(1 2 3 4 5))
+         (cyclic value)
+         (list-val (list 'a 'b cyclic))
+         (list-copy (copy-tree list-val)))
+    (nconc cyclic cyclic)
+    (should
+     (equal list-copy
+            (list-utils-make-linear-copy list-val 'tree)))))
+
+(ert-deftest list-utils-make-linear-copy-06 nil
+  "With 'tree"
+  (let* ((value '(1 2 3 4 5))
+         (cyclic value)
+         (list-val (list 'a 'b cyclic))
+         (list-copy (copy-tree list-val)))
+    (nconc cyclic (cdr cyclic))
+    (should
+     (equal list-copy
+            (list-utils-make-linear-copy list-val 'tree)))))
+
+(ert-deftest list-utils-make-linear-copy-07 nil
+  "With 'tree"
+  (let* ((value '(1 2 3 4 5))
+         (cyclic value)
+         (list-val (list 1 2 3 (list 4 (list 5 6 cyclic))))
+         (list-copy (copy-tree list-val)))
+    (nconc cyclic (cdr cyclic))
+    (should
+     (equal list-copy
+            (list-utils-make-linear-copy list-val 'tree)))))
+
+(ert-deftest list-utils-make-linear-copy-08 nil
+  "With 'tree"
+  (let* ((value '(1 2 3 4 5))
+         (cyclic value)
+         (list-val (list 1 2 3 (list 4 (list 5 6 cyclic))))
+         (list-copy (copy-tree list-val)))
+    (nconc cyclic (cdr cyclic))
+    (nconc list-val list-val)
+    (should
+     (equal list-copy
+            (list-utils-make-linear-copy list-val 'tree)))))
+
 ;;; list-utils-flatten
 
 (ert-deftest list-utils-flatten-01 nil
