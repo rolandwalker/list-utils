@@ -68,54 +68,127 @@
              (list-utils-cons-cell-p '(1 2 3 4 5 . 6)))))
 
 
-;;; list-utils-make-proper
+;;; list-utils-make-proper-inplace
 
-(ert-deftest list-utils-make-proper-01 nil
-  (should (equal '(a b c d e f)
-                 (list-utils-make-proper '(a b c d e f)))))
+(ert-deftest list-utils-make-proper-inplace-01 nil
+  "Already proper"
+  (let* ((proper '(a b c d e f))
+         (copy (copy-tree proper)))
+    (should
+     (equal proper copy))
+    (should
+     (equal proper
+            (list-utils-make-proper-inplace copy)))
+    (should
+     (equal proper copy))))
 
-(ert-deftest list-utils-make-proper-02 nil
+(ert-deftest list-utils-make-proper-inplace-02 nil
+  "nil"
   (should-not
-   (list-utils-make-proper nil)))
+   (list-utils-make-proper-inplace nil)))
 
-(ert-deftest list-utils-make-proper-03 nil
+(ert-deftest list-utils-make-proper-inplace-03 nil
+  "Non-list"
   (should-error
-   (list-utils-make-proper 1)))
+   (list-utils-make-proper-inplace 1)))
 
-(ert-deftest list-utils-make-proper-04 nil
-  (should (equal '(1 2)
-                 (list-utils-make-proper '(1 . 2)))))
+(ert-deftest list-utils-make-proper-inplace-04 nil
+  "Two elt cons"
+  (let* ((proper '(1 2))
+         (improper (apply 'list* proper)))
+    (should-not
+     (equal proper improper))
+    (should
+     (equal proper
+            (list-utils-make-proper-inplace improper)))
+    (should
+     ;; was changed inplace
+     (equal proper improper))))
 
-(ert-deftest list-utils-make-proper-05 nil
-  (should (equal '(1 2 3 4 5 6)
-                 (list-utils-make-proper '(1 2 3 4 5 . 6)))))
+(ert-deftest list-utils-make-proper-inplace-05 nil
+  "Multi-elt improper list"
+  (let* ((proper '(a b c d e f))
+         (improper (apply 'list* proper)))
+    (should-not
+     (equal proper improper))
+    (should
+     (equal proper
+            (list-utils-make-proper-inplace improper)))
+    (should
+     ;; was changed inplace
+     (equal proper improper))))
+
+(ert-deftest list-utils-make-proper-inplace-06 nil
+  "Single-elt list"
+  (let* ((proper '(1))
+         (copy (copy-tree proper)))
+    (should
+     (equal proper copy))
+    (should
+     (equal proper
+            (list-utils-make-proper-inplace copy)))
+    (should
+     (equal proper copy))))
 
 
-;;; list-utils-make-improper
+;;; list-utils-make-improper-inplace
 
-(ert-deftest list-utils-make-improper-01 nil
-  (should (equal '(a b c d e . f)
-                 (list-utils-make-improper '(a b c d e f)))))
+(ert-deftest list-utils-make-improper-inplace-01 nil
+  "Already improper"
+  (let* ((improper '(1 2 3 4 5 . 6))
+         (copy (copy-tree improper)))
+    (should
+     (equal improper copy))
+    (should
+     (equal improper
+            (list-utils-make-improper-inplace copy)))
+    (should
+     (equal improper copy))))
 
-(ert-deftest list-utils-make-improper-02 nil
+(ert-deftest list-utils-make-improper-inplace-02 nil
+  "Nil"
   (should-error
-   (list-utils-make-improper nil)))
+   (list-utils-make-improper-inplace nil)))
 
-(ert-deftest list-utils-make-improper-03 nil
+(ert-deftest list-utils-make-improper-inplace-03 nil
+  "Non-list"
   (should-error
-   (list-utils-make-improper 1)))
+   (list-utils-make-improper-inplace 1)))
 
-(ert-deftest list-utils-make-improper-04 nil
-  (should (equal '(1 . 2)
-                 (list-utils-make-improper '(1 . 2)))))
+(ert-deftest list-utils-make-improper-inplace-04 nil
+  "Two elt list"
+  (let* ((proper '(1 2))
+         (improper (apply 'list* proper)))
+    (should-not
+     (equal improper proper))
+    (should
+     (equal improper
+            (list-utils-make-improper-inplace proper)))
+    (should
+     ;; was changed inplace
+     (equal improper proper))))
 
-(ert-deftest list-utils-make-improper-05 nil
-  (should (equal '(1 2 3 4 5 . 6)
-                 (list-utils-make-improper '(1 2 3 4 5 . 6)))))
+(ert-deftest list-utils-make-improper-inplace-05 nil
+  "Multi-elt list"
+  (let* ((proper '(a b c d e f))
+         (improper (apply 'list* proper)))
+    (should-not
+     (equal improper proper))
+    (should
+     (equal improper
+            (list-utils-make-improper-inplace proper)))
+    (should
+     ;; was changed inplace
+     (equal improper proper))))
 
-(ert-deftest list-utils-make-improper-06 nil
-  (should-error
-   (list-utils-make-improper '(1))))
+(ert-deftest list-utils-make-improper-inplace-06 nil
+  "Single-elt list"
+  (let* ((proper '(1))
+         (copy (copy-tree proper)))
+    (should
+     (equal proper copy))
+    (should-error
+     (list-utils-make-improper-inplace copy))))
 
 
 ;;; list-utils-cyclic-length

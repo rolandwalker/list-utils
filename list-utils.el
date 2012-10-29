@@ -52,8 +52,8 @@
 ;;     `list-utils-cons-cell-p'
 ;;     `list-utils-cyclic-length'
 ;;     `list-utils-improper-p'
-;;     `list-utils-make-proper'
-;;     `list-utils-make-improper'
+;;     `list-utils-make-proper-inplace'
+;;     `list-utils-make-improper-inplace'
 ;;     `list-utils-linear-p'
 ;;     `list-utils-linear-subseq'
 ;;     `list-utils-cyclic-p'
@@ -214,7 +214,7 @@ Such improper lists are produced by `list*'."
       (nthcdr len cell))))
 
 ;;;###autoload
-(defun list-utils-make-proper (list)
+(defun list-utils-make-proper-inplace (list)
   "Make a cons cell or improper LIST into a proper list.
 
 Improper lists consist of proper lists consed onto a final
@@ -225,9 +225,10 @@ Modifies LIST and returns the modified value."
   (when (list-utils-cons-cell-p list)
     (callf list (nthcdr (safe-length list) list)))
   list)
+(define-obsolete-function-alias 'list-utils-make-proper 'list-utils-make-proper-inplace)
 
 ;;;###autoload
-(defun list-utils-make-improper (list)
+(defun list-utils-make-improper-inplace (list)
   "Make proper LIST into an improper list.
 
 Improper lists consist of proper lists consed onto a final
@@ -239,6 +240,7 @@ Modifies LIST and returns the modified value."
     (assert (> (safe-length list) 1) nil "LIST has only one element")
     (setcdr (last list 2) (car (last list))))
   list)
+(define-obsolete-function-alias 'list-utils-make-improper 'list-utils-make-improper-inplace)
 
 ;;;###autoload
 (defun list-utils-linear-subseq (list &optional cycle-length)
@@ -460,7 +462,7 @@ lists, returns a depth of 1."
           (list-utils-cyclic-p list))
      (list-utils-depth (list-utils-make-linear-copy list)))
     ((list-utils-cons-cell-p list)
-     (+ 1 (apply 'max (mapcar 'list-utils-depth (list-utils-make-proper (copy-tree list))))))
+     (+ 1 (apply 'max (mapcar 'list-utils-depth (list-utils-make-proper-inplace (copy-tree list))))))
     (t
      (+ 1 (apply 'max (mapcar 'list-utils-depth list))))))
 
@@ -500,12 +502,12 @@ LIST is modified and the new value is returned."
   (let ((improper (list-utils-improper-p list))
         (pos nil))
     (when improper
-      (callf list-utils-make-proper list))
+      (callf list-utils-make-proper-inplace list))
     (setq pos (position element list))
     (assert pos nil "Element not found: %s" element)
     (push new-element (nthcdr pos list))
     (when improper
-      (callf list-utils-make-improper list)))
+      (callf list-utils-make-improper-inplace list)))
   list)
 
 ;;;###autoload
@@ -516,12 +518,12 @@ LIST is modified and the new value is returned."
   (let ((improper (list-utils-improper-p list))
         (pos nil))
     (when improper
-      (callf list-utils-make-proper list))
+      (callf list-utils-make-proper-inplace list))
     (setq pos (position element list))
     (assert pos nil "Element not found: %s" element)
     (push new-element (cdr (nthcdr pos list)))
     (when improper
-      (callf list-utils-make-improper list)))
+      (callf list-utils-make-improper-inplace list)))
   list)
 
 ;;;###autoload
@@ -533,14 +535,14 @@ POS is zero-indexed.
 LIST is modified and the new value is returned."
   (let ((improper (list-utils-improper-p list)))
     (when improper
-      (callf list-utils-make-proper list))
+      (callf list-utils-make-proper-inplace list))
     (assert (and (integerp pos)
                  (>= pos 0)
                  (< pos (length list))) nil "No such position %s" pos)
     (push new-element
           (nthcdr pos list))
     (when improper
-      (callf list-utils-make-improper list)))
+      (callf list-utils-make-improper-inplace list)))
   list)
 
 ;;;###autoload
@@ -550,14 +552,14 @@ LIST is modified and the new value is returned."
 LIST is modified and the new value is returned."
   (let ((improper (list-utils-improper-p list)))
     (when improper
-      (callf list-utils-make-proper list))
+      (callf list-utils-make-proper-inplace list))
     (assert (and (integerp pos)
                  (>= pos 0)
                  (< pos (length list))) nil "No such position %s" pos)
     (push new-element
           (cdr (nthcdr pos list)))
     (when improper
-      (callf list-utils-make-improper list)))
+      (callf list-utils-make-improper-inplace list)))
   list)
 
 ;;; alists
