@@ -54,6 +54,7 @@
 ;;     `list-utils-improper-p'
 ;;     `list-utils-make-proper-copy'
 ;;     `list-utils-make-proper-inplace'
+;;     `list-utils-make-improper-copy'
 ;;     `list-utils-make-improper-inplace'
 ;;     `list-utils-linear-p'
 ;;     `list-utils-linear-subseq'
@@ -243,6 +244,21 @@ Modifies LIST and returns the modified value."
     (callf list (nthcdr (safe-length list) list)))
   list)
 (define-obsolete-function-alias 'list-utils-make-proper 'list-utils-make-proper-inplace)
+
+;;;###autoload
+(defun list-utils-make-improper-copy (list)
+  "Copy a proper LIST into an improper list.
+
+Improper lists consist of proper lists consed onto a final
+element, and are produced by `list*'."
+  (assert (listp list) nil "LIST is not a list")
+  (assert (> (safe-length list) 1) nil "LIST has only one element")
+  (let ((tail (list-utils-cons-cell-p list)))
+    (cond
+      (tail
+       (copy-list list))
+      (t
+       (apply 'list* list)))))
 
 ;;;###autoload
 (defun list-utils-make-improper-inplace (list)

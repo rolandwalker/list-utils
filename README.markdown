@@ -49,6 +49,7 @@ The following functions are provided:
 	list-utils-improper-p
 	list-utils-make-proper-copy
 	list-utils-make-proper-inplace
+	list-utils-make-improper-copy
 	list-utils-make-improper-inplace
 	list-utils-linear-p
 	list-utils-linear-subseq

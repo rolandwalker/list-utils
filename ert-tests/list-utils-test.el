@@ -196,6 +196,68 @@
      (equal proper copy))))
 
 
+;;; list-utils-make-improper-copy
+
+(ert-deftest list-utils-make-improper-copy-01 nil
+  "Already improper"
+  (let* ((improper '(1 2 3 4 5 . 6))
+         (copy (copy-tree improper)))
+    (should
+     (equal improper copy))
+    (should
+     (equal improper
+            (list-utils-make-improper-copy copy)))
+    (should
+     (equal improper copy))))
+
+(ert-deftest list-utils-make-improper-copy-02 nil
+  "Nil"
+  (should-error
+   (list-utils-make-improper-copy nil)))
+
+(ert-deftest list-utils-make-improper-copy-03 nil
+  "Non-list"
+  (should-error
+   (list-utils-make-improper-copy 1)))
+
+(ert-deftest list-utils-make-improper-copy-04 nil
+  "Two elt list"
+  (let* ((proper '(1 2))
+         (improper (apply 'list* proper))
+         (backup (copy-tree proper)))
+    (should-not
+     (equal improper proper))
+    (should
+     (equal improper
+            (list-utils-make-improper-copy proper)))
+    (should
+     ;; was not changed inplace
+     (equal backup proper))))
+
+(ert-deftest list-utils-make-improper-copy-05 nil
+  "Multi-elt list"
+  (let* ((proper '(a b c d e f))
+         (improper (apply 'list* proper))
+         (backup (copy-tree proper)))
+    (should-not
+     (equal improper proper))
+    (should
+     (equal improper
+            (list-utils-make-improper-copy proper)))
+    (should
+     ;; was not changed inplace
+     (equal backup proper))))
+
+(ert-deftest list-utils-make-improper-copy-06 nil
+  "Single-elt list"
+  (let* ((proper '(1))
+         (copy (copy-tree proper)))
+    (should
+     (equal proper copy))
+    (should-error
+     (list-utils-make-improper-copy copy))))
+
+
 ;;; list-utils-make-improper-inplace
 
 (ert-deftest list-utils-make-improper-inplace-01 nil
