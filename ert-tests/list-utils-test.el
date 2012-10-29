@@ -68,6 +68,71 @@
              (list-utils-cons-cell-p '(1 2 3 4 5 . 6)))))
 
 
+;;; list-utils-make-proper-copy
+
+(ert-deftest list-utils-make-proper-copy-01 nil
+  "Already proper"
+  (let* ((proper '(a b c d e f))
+         (copy (copy-tree proper)))
+    (should
+     (equal proper copy))
+    (should
+     (equal proper
+            (list-utils-make-proper-copy copy)))
+    (should
+     (equal proper copy))))
+
+(ert-deftest list-utils-make-proper-copy-02 nil
+  "nil"
+  (should-not
+   (list-utils-make-proper-copy nil)))
+
+(ert-deftest list-utils-make-proper-copy-03 nil
+  "Non-list"
+  (should-error
+   (list-utils-make-proper-copy 1)))
+
+(ert-deftest list-utils-make-proper-copy-04 nil
+  "Two elt cons"
+  (let* ((proper '(1 2))
+         (improper (apply 'list* proper))
+         (backup (copy-tree improper)))
+    (should-not
+     (equal proper improper))
+    (should
+     (equal proper
+            (list-utils-make-proper-copy improper)))
+    (should
+     ;; was not changed inplace
+     (equal backup improper))))
+
+(ert-deftest list-utils-make-proper-copy-05 nil
+  "Multi-elt improper list"
+  (let* ((proper '(a b c d e f))
+         (improper (apply 'list* proper))
+         (backup (copy-tree improper)))
+    (should-not
+     (equal proper improper))
+    (should
+     (equal proper
+            (list-utils-make-proper-copy improper)))
+    (should
+     ;; was not changed inplace
+     (equal backup improper))))
+
+(ert-deftest list-utils-make-proper-copy-06 nil
+  "Single-elt list"
+  (let* ((proper '(1))
+         (copy (copy-tree proper)))
+    (should
+     (equal proper copy))
+    (should
+     (equal proper
+            (list-utils-make-proper-copy copy)))
+    (should
+     (equal proper copy))))
+
+
 ;;; list-utils-make-proper-inplace
 
 (ert-deftest list-utils-make-proper-inplace-01 nil

@@ -47,6 +47,7 @@ The following functions are provided:
 	list-utils-cons-cell-p
 	list-utils-cyclic-length
 	list-utils-improper-p
+	list-utils-make-proper-copy
 	list-utils-make-proper-inplace
 	list-utils-make-improper-inplace
 	list-utils-linear-p

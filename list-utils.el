@@ -52,6 +52,7 @@
 ;;     `list-utils-cons-cell-p'
 ;;     `list-utils-cyclic-length'
 ;;     `list-utils-improper-p'
+;;     `list-utils-make-proper-copy'
 ;;     `list-utils-make-proper-inplace'
 ;;     `list-utils-make-improper-inplace'
 ;;     `list-utils-linear-p'
@@ -212,6 +213,22 @@ Such improper lists are produced by `list*'."
                (> len 0)
                (not (listp (nthcdr len cell))))
       (nthcdr len cell))))
+
+;;;###autoload
+(defun list-utils-make-proper-copy (list)
+  "Copy a cons cell or improper LIST into a proper list.
+
+Improper lists consist of proper lists consed onto a final
+element, and are produced by `list*'."
+  (assert (listp list) nil "LIST is not a list")
+  (let ((tail (list-utils-cons-cell-p list)))
+    (cond
+      (tail
+       (append
+        (subseq list 0 (safe-length list))
+        (list tail)))
+      (t
+       (copy-sequence list)))))
 
 ;;;###autoload
 (defun list-utils-make-proper-inplace (list)
@@ -462,7 +479,7 @@ lists, returns a depth of 1."
           (list-utils-cyclic-p list))
      (list-utils-depth (list-utils-make-linear-copy list)))
     ((list-utils-cons-cell-p list)
-     (+ 1 (apply 'max (mapcar 'list-utils-depth (list-utils-make-proper-inplace (copy-tree list))))))
+     (+ 1 (apply 'max (mapcar 'list-utils-depth (list-utils-make-proper-copy list)))))
     (t
      (+ 1 (apply 'max (mapcar 'list-utils-depth list))))))
 
