@@ -1436,6 +1436,14 @@
   (should (equal (list* 1 2 'elt 3)
                  (list-utils-insert-before (list* 1 2 3) 3 'elt))))
 
+(ert-deftest list-utils-insert-before-09 nil
+  "set TEST"
+  (should-error
+   (list-utils-insert-before '(1 2.0 3 4 5) 2 'elt))
+  (should
+   (equal '(1 elt 2.0 3 4 5)
+          (list-utils-insert-before '(1 2.0 3 4 5) 2 'elt '=))))
+
 
 ;;; list-utils-insert-after
 
@@ -1470,6 +1478,14 @@
 (ert-deftest list-utils-insert-after-08 nil
   (should (equal (list* 1 2 3 'elt)
                  (list-utils-insert-after (list* 1 2 3) 3 'elt))))
+
+(ert-deftest list-utils-insert-after-09 nil
+  "set TEST"
+  (should-error
+   (list-utils-insert-after '(1 2.0 3 4 5) 2 'elt))
+  (should
+   (equal '(1 2.0 elt 3 4 5)
+          (list-utils-insert-after '(1 2.0 3 4 5) 2 'elt '=))))
 
 
 ;;; list-utils-insert-before-pos

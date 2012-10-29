@@ -583,15 +583,19 @@ flattens circular list structures."
      (list list))))
 
 ;;;###autoload
-(defun list-utils-insert-before (list element new-element)
+(defun list-utils-insert-before (list element new-element &optional test)
   "Look in LIST for ELEMENT and insert NEW-ELEMENT before it.
 
+Optional TEST sets the test used for a matching element, and
+defaults to `equal'.
+
 LIST is modified and the new value is returned."
+  (callf or test 'equal)
   (let ((improper (list-utils-improper-p list))
         (pos nil))
     (when improper
       (callf list-utils-make-proper-inplace list))
-    (setq pos (position element list))
+    (setq pos (position element list :test test))
     (assert pos nil "Element not found: %s" element)
     (push new-element (nthcdr pos list))
     (when improper
@@ -599,15 +603,19 @@ LIST is modified and the new value is returned."
   list)
 
 ;;;###autoload
-(defun list-utils-insert-after (list element new-element)
+(defun list-utils-insert-after (list element new-element &optional test)
   "Look in LIST for ELEMENT and insert NEW-ELEMENT after it.
 
+Optional TEST sets the test used for a matching element, and
+defaults to `equal'.
+
 LIST is modified and the new value is returned."
+  (callf or test 'equal)
   (let ((improper (list-utils-improper-p list))
         (pos nil))
     (when improper
       (callf list-utils-make-proper-inplace list))
-    (setq pos (position element list))
+    (setq pos (position element list :test test))
     (assert pos nil "Element not found: %s" element)
     (push new-element (cdr (nthcdr pos list)))
     (when improper
