@@ -361,13 +361,13 @@ of 0.
 
 If LIST is a cons cell or a list which does not contain other
 lists, returns a depth of 1."
-  (when (and (listp list)
-             (list-utils-cyclic-subseq list))
-    (setq list (subseq list 0 (list-utils-safe-length list))))
   (cond
     ((or (not (listp list))
          (null list))
      0)
+    ((and (listp list)
+          (list-utils-cyclic-p list))
+     (list-utils-depth (subseq list 0 (list-utils-safe-length list))))
     ((list-utils-cons-cell-p list)
      (+ 1 (apply 'max (mapcar 'list-utils-depth (list-utils-make-proper (copy-tree list))))))
     (t
@@ -375,19 +375,19 @@ lists, returns a depth of 1."
 
 ;;;###autoload
 (defun list-utils-flatten (list)
-  "Flatten LIST, which may contain other lists.
+  "Return a flattened copy of LIST, which may contain other lists.
 
 This function flattens cons cells as lists, and
 flattens circular list structures."
-
-  (when (and (listp list)
-             (list-utils-cyclic-subseq list))
-    (setq list (subseq list 0 (list-utils-safe-length list))))
 
   (cond
 
     ((null list)
      nil)
+
+    ((and (listp list)
+          (list-utils-cyclic-p list))
+     (list-utils-flatten (subseq list 0 (list-utils-safe-length list))))
 
     ((and (listp list)
           (consp (car list)))
@@ -482,14 +482,14 @@ This function simply avoids flattening single conses or improper
 lists where the last two elements would be expressed as a dotted
 pair."
 
-  (when (and (listp list)
-             (list-utils-cyclic-subseq list))
-    (setq list (subseq list 0 (list-utils-safe-length list))))
-
   (cond
 
     ((null list)
      nil)
+
+    ((and (listp list)
+          (list-utils-cyclic-p list))
+     (list-utils-alist-flatten (subseq list 0 (list-utils-safe-length list))))
 
     ((list-utils-cons-cell-p list)
      list)

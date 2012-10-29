@@ -420,6 +420,23 @@
     (should (equal '(1)
                    (list-utils-flatten cyclic)))))
 
+(ert-deftest list-utils-flatten-08 nil
+  "Don't modifiy LIST"
+  (let ((cyclic-1 '(1 2 3 (4 5)))
+        (cyclic-2 '(1 2 3 (4 5))))
+    (nconc cyclic-1 (cdr cyclic-1))
+    (nconc cyclic-2 (cdr cyclic-2))
+    (should
+     (equal '(1 2 3 4 5)
+        (list-utils-flatten cyclic-1)))
+    (should
+     (equal (list-utils-linear-subseq cyclic-1)
+            (list-utils-linear-subseq cyclic-2)))
+    (should
+     (equal
+      (subseq (list-utils-cyclic-subseq cyclic-1) 0 (list-utils-safe-length (list-utils-cyclic-subseq cyclic-1)))
+      (subseq (list-utils-cyclic-subseq cyclic-2) 0 (list-utils-safe-length (list-utils-cyclic-subseq cyclic-2)))))))
+
 
 ;;; list-utils-depth
 
@@ -490,6 +507,23 @@
     (should (= 1
                (list-utils-depth cyclic)))))
 
+(ert-deftest list-utils-depth-13 nil
+  "Don't modifiy LIST"
+  (let ((cyclic-1 '(1 2 3 (4 5)))
+        (cyclic-2 '(1 2 3 (4 5))))
+    (nconc cyclic-1 (cdr cyclic-1))
+    (nconc cyclic-2 (cdr cyclic-2))
+    (should
+     (= 2
+        (list-utils-depth cyclic-1)))
+    (should
+     (equal (list-utils-linear-subseq cyclic-1)
+            (list-utils-linear-subseq cyclic-2)))
+    (should
+     (equal
+      (subseq (list-utils-cyclic-subseq cyclic-1) 0 (list-utils-safe-length (list-utils-cyclic-subseq cyclic-1)))
+      (subseq (list-utils-cyclic-subseq cyclic-2) 0 (list-utils-safe-length (list-utils-cyclic-subseq cyclic-2)))))))
+
 
 ;;; list-utils-alist-flatten
 
@@ -512,6 +546,23 @@
 (ert-deftest list-utils-alist-flatten-05 nil
   (should (equal (cons 1 2)
                  (list-utils-alist-flatten (cons 1 2)))))
+
+(ert-deftest list-utils-alist-flatten-06 nil
+  "Don't modifiy LIST"
+  (let ((cyclic-1 '(1 2 3 ((4 . 5) (6 . 7))))
+        (cyclic-2 '(1 2 3 ((4 . 5) (6 . 7)))))
+    (nconc cyclic-1 (cdr cyclic-1))
+    (nconc cyclic-2 (cdr cyclic-2))
+    (should
+     (equal '(1 2 3 (4 . 5) (6 . 7))
+        (list-utils-alist-flatten cyclic-1)))
+    (should
+     (equal (list-utils-linear-subseq cyclic-1)
+            (list-utils-linear-subseq cyclic-2)))
+    (should
+     (equal
+      (subseq (list-utils-cyclic-subseq cyclic-1) 0 (list-utils-safe-length (list-utils-cyclic-subseq cyclic-1)))
+      (subseq (list-utils-cyclic-subseq cyclic-2) 0 (list-utils-safe-length (list-utils-cyclic-subseq cyclic-2)))))))
 
 
 ;;; list-utils-insert-before
