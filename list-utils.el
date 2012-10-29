@@ -694,10 +694,9 @@ pair."
 (defun list-utils-plist-reverse (plist)
   "Return reversed copy of property-list PLIST, maintaining pair associations."
   (assert (= 0 (% (length plist) 2)) nil "Not a PLIST")
-  (let ((alist nil))
-    (while plist
-      (push (cons (pop plist) (pop plist)) alist))
-    (list-utils-flatten alist)))
+  (loop for (a b) on (reverse plist) by 'cddr
+        collect b
+        collect a))
 
 ;;;###autoload
 (defun list-utils-plist-del (plist prop)

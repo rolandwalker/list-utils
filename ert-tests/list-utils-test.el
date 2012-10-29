@@ -1568,6 +1568,10 @@
   (should-error
    (list-utils-plist-reverse '(:one 1 :two 2 :three 3 :four))))
 
+(ert-deftest list-utils-plist-reverse-03 nil
+  (should (equal '(:four 4 :three 3 :two 2 :one (1 (1 (1))))
+                 (list-utils-plist-reverse '(:one (1 (1 (1))) :two 2 :three 3 :four 4)))))
+
 
 ;;; list-utils-plist-del
 
