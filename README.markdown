@@ -56,6 +56,7 @@ The following functions are provided:
 	list-utils-make-linear-copy
 	list-utils-make-linear-inplace
 	list-utils-safe-length
+	list-utils-safe-equal
 	list-utils-depth
 	list-utils-flatten
 	list-utils-alist-flatten

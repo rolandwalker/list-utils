@@ -61,6 +61,7 @@
 ;;     `list-utils-make-linear-copy'
 ;;     `list-utils-make-linear-inplace'
 ;;     `list-utils-safe-length'
+;;     `list-utils-safe-equal'
 ;;     `list-utils-depth'
 ;;     `list-utils-flatten'
 ;;     `list-utils-alist-flatten'
@@ -389,6 +390,60 @@ cyclic lists contained within."
     (t
      list)))
 
+;;;###autoload
+(defun list-utils-safe-equal (list-1 list-2 &optional test)
+  "Compare LIST-1 and LIST-2, which may be cyclic lists.
+
+LIST-1 and LIST-2 may also contain cyclic lists, which are
+each traversed and compared.  This function will not infloop
+when cyclic lists are encountered.
+
+Non-nil is returned only if the leaves of LIST-1 and LIST-2 are
+`equal' and the structure is identical.
+
+Optional TEST specifies a test, defaulting to `equal'.
+
+If LIST-1 and LIST-2 are not actually lists, they are still
+compared according to TEST."
+  (callf or test 'equal)
+  (cond
+    ((and (not (listp list-1))
+          (not (listp list-2)))
+     (funcall test list-1 list-2))
+    ((or (not (listp list-1))
+         (not (listp list-2)))
+     nil)
+    (t
+     (catch 'match
+       (let* ((cyclic-1 (list-utils-make-linear-copy (list-utils-cyclic-subseq list-1 'from-start)))
+              (cyclic-2 (list-utils-make-linear-copy (list-utils-cyclic-subseq list-2 'from-start)))
+              (clen-1 (list-utils-safe-length cyclic-1))
+              (clen-2 (list-utils-safe-length cyclic-2))
+              (linear-1 nil)
+              (linear-2 nil)
+              (last-cdr-1 nil)
+              (last-cdr-2 nil))
+         (unless (= clen-1 clen-2)
+           (throw 'match nil))
+         (loop for a in cyclic-1
+               for b in cyclic-2
+               unless (list-utils-safe-equal a b) do (throw 'match nil))
+         (setq linear-1 (list-utils-linear-subseq list-1 clen-1))
+         (setq linear-2 (list-utils-linear-subseq list-2 clen-2))
+         (unless (= (list-utils-safe-length linear-1) (list-utils-safe-length linear-2))
+           (throw 'match nil))
+         (loop for a in linear-1
+               for b in linear-2
+               unless (list-utils-safe-equal a b) do (throw 'match nil))
+         (setq last-cdr-1 (list-utils-improper-p linear-1))
+         (setq last-cdr-2 (list-utils-improper-p linear-2))
+         (when (or (if last-cdr-1 (not last-cdr-2) last-cdr-2)
+                   (and last-cdr-1
+                        (not (funcall test last-cdr-1 last-cdr-2))))
+           (throw 'match nil)))
+       t))))
+
+;;;###autoload
 (defun list-utils-depth (list)
   "Find the depth of LIST, which may contain other lists.
 

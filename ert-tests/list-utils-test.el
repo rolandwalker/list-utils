@@ -412,6 +412,18 @@
      (equal value
             (list-utils-make-linear-copy cyclic)))))
 
+(ert-deftest list-utils-make-linear-copy-04 nil
+  "LIST argument is unchanged."
+  (let* ((value '(1 2 3 (4 (5 6))))
+         (cyclic-1 (copy-tree value))
+         (cyclic-2 (copy-tree value)))
+    (nconc cyclic-1 (cdr cyclic-1))
+    (nconc cyclic-2 (cdr cyclic-2))
+    (should
+     (equal value
+            (list-utils-make-linear-copy cyclic-1)))
+    (should
+     (list-utils-safe-equal cyclic-1 cyclic-2))))
 
 (ert-deftest list-utils-make-linear-copy-05 nil
   "With 'tree"
@@ -458,6 +470,20 @@
      (equal list-copy
             (list-utils-make-linear-copy list-val 'tree)))))
 
+(ert-deftest list-utils-make-linear-copy-09 nil
+  "With 'tree. LIST argument is not altered."
+  (let* ((value '(1 2 3 4 5))
+         (cyclic value)
+         (list-val (list 'a 'b cyclic))
+         (list-copy (copy-tree list-val)))
+    (nconc cyclic (cdr cyclic))
+    (should
+     (equal list-copy
+            (list-utils-make-linear-copy list-val 'tree)))
+    (should-not
+     (list-utils-safe-equal list-copy list-val))))
+
+
 ;;; list-utils-make-linear-inplace
 
 (ert-deftest list-utils-make-linear-inplace-01 nil
@@ -483,6 +509,17 @@
     (should
      (equal value
             (list-utils-make-linear-inplace cyclic)))))
+
+(ert-deftest list-utils-make-linear-inplace-04 nil
+  "LIST argument is altered."
+  (let* ((value '(1 2 3 (4 (5 6))))
+         (cyclic-1 (copy-tree value)))
+    (nconc cyclic-1 (cdr cyclic-1))
+    (should
+     (equal value
+            (list-utils-make-linear-inplace cyclic-1)))
+    (should
+     (list-utils-safe-equal value cyclic-1))))
 
 (ert-deftest list-utils-make-linear-inplace-05 nil
   "With 'tree"
@@ -541,6 +578,157 @@
             (list-utils-make-linear-inplace list-val 'tree)))
     (should
      (equal list-copy list-val))))
+
+
+;;; list-utils-safe-equal
+
+(ert-deftest list-utils-safe-equal-01 nil
+  "Simple list"
+  (let* ((value '(1 2 3 4 5))
+         (copy (copy-tree value)))
+    (should
+     (list-utils-safe-equal copy value))))
+
+(ert-deftest list-utils-safe-equal-02 nil
+  "Differ by length"
+  (let* ((value '(1 2 3 4 5))
+         (copy (copy-tree value)))
+    (pop copy)
+    (should-not
+     (list-utils-safe-equal copy value))))
+
+(ert-deftest list-utils-safe-equal-03 nil
+  "nonstandard TEST"
+  (let* ((value-1 '(1 2 3 4 5))
+         (value-2 '(1.0 2.0 3.0 4.0 5.0)))
+    (should-not
+     (list-utils-safe-equal value-1 value-2))
+    (should-not
+     (list-utils-safe-equal value-1 value-2 '=))))
+
+(ert-deftest list-utils-safe-equal-04 nil
+  "Cyclic 1"
+  (let* ((value '(1 2 3 4 5))
+         (cyclic-1 (copy-tree value))
+         (cyclic-2 (copy-tree value)))
+    (nconc cyclic-1 cyclic-1)
+    (nconc cyclic-2 cyclic-2)
+    (should
+     (list-utils-safe-equal cyclic-1 cyclic-2))
+    ;; args remain unmodified
+    (should-not
+     (list-utils-safe-equal cyclic-1 value))
+    (should-not
+     (list-utils-safe-equal cyclic-2 value))))
+
+(ert-deftest list-utils-safe-equal-05 nil
+  "Cyclic 2"
+  (let* ((value '(1 2 3 4 5))
+         (cyclic-1 (copy-tree value))
+         (cyclic-2 (copy-tree value)))
+    (nconc cyclic-1 (cdr cyclic-1))
+    (nconc cyclic-2 (cdr cyclic-2))
+    (should
+     (list-utils-safe-equal cyclic-1 cyclic-2))
+    ;; args remain unmodified
+    (should-not
+     (list-utils-safe-equal cyclic-1 value))
+    (should-not
+     (list-utils-safe-equal cyclic-2 value))))
+
+(ert-deftest list-utils-safe-equal-06 nil
+  "Differ only by cyclic structure"
+  (let* ((value '(1 2 3 4 5))
+         (cyclic-1 (copy-tree value))
+         (cyclic-2 (copy-tree value)))
+    (nconc cyclic-1 cyclic-1)
+    (nconc cyclic-2 (cdr cyclic-2))
+    (should-not
+     (list-utils-safe-equal cyclic-1 cyclic-2))
+    ;; args remain unmodified
+    (should-not
+     (list-utils-safe-equal cyclic-1 value))
+    (should-not
+     (list-utils-safe-equal cyclic-2 value))))
+
+(ert-deftest list-utils-safe-equal-07 nil
+  "Tree with cycle"
+  (let* ((value '(1 2 3 (4 (5 6))))
+         (cyclic-1 (copy-tree value))
+         (cyclic-2 (copy-tree value)))
+    (nconc cyclic-1 (cdr cyclic-1))
+    (nconc cyclic-2 (cdr cyclic-2))
+    (should
+     (list-utils-safe-equal cyclic-1 cyclic-2))
+    ;; args remain unmodified
+    (should-not
+     (list-utils-safe-equal cyclic-1 value))
+    (should-not
+     (list-utils-safe-equal cyclic-2 value))))
+
+(ert-deftest list-utils-safe-equal-08 nil
+  "List containing other cycles"
+  (let* ((value '(1 2 3 4 5))
+         (cyclic-1 (copy-tree value))
+         (cyclic-2 (copy-tree value))
+         (list-1 (list 'a 'b cyclic-1))
+         (list-2 (list 'a 'b cyclic-2)))
+    (nconc cyclic-1 (cdr cyclic-1))
+    (nconc cyclic-2 (cdr cyclic-2))
+    (should
+     (list-utils-safe-equal list-1 list-2))))
+
+(ert-deftest list-utils-safe-equal-09 nil
+  "Cyclic list of size one"
+  (let* ((value '(1))
+         (cyclic-1 (copy-tree value))
+         (cyclic-2 (copy-tree value)))
+    (nconc cyclic-1 cyclic-1)
+    (nconc cyclic-2 cyclic-2)
+    (should
+     (list-utils-safe-equal cyclic-1 cyclic-2))
+    (should-not
+     (list-utils-safe-equal cyclic-1 value))
+    (should-not
+     (list-utils-safe-equal cyclic-2 value))))
+
+(ert-deftest list-utils-safe-equal-10 nil
+  "Improper list"
+  (let* ((value (list* 1 2 3))
+         (copy-1 (copy-tree value))
+         (copy-2 (copy-tree value)))
+    (should
+     (list-utils-safe-equal copy-1 copy-2))
+    (should
+     (equal copy-1 value))))
+
+(ert-deftest list-utils-safe-equal-11 nil
+  "Improper list"
+  (let* ((value-1 (list* 1 2 3))
+         (value-2 (list* 1 2)))
+    (should-not
+     (list-utils-safe-equal value-1 value-2))))
+
+(ert-deftest list-utils-safe-equal-12 nil
+  "Improper list"
+  (let* ((value-1 (list* 1 2 3))
+         (value-2 (list* 1 2 4)))
+    (should-not
+     (list-utils-safe-equal value-1 value-2))))
+
+(ert-deftest list-utils-safe-equal-13 nil
+  "Non-list"
+  (should
+   (list-utils-safe-equal 1 1))
+  (should
+   (list-utils-safe-equal "1" "1"))
+  (should-not
+   (list-utils-safe-equal 1 "1")))
+
+(ert-deftest list-utils-safe-equal-14 nil
+  "mixed list"
+  (should-not
+   (list-utils-safe-equal 1 (list 1))))
 
 
 ;;; list-utils-flatten
