@@ -140,7 +140,7 @@
 
 ;;; requirements
 
-;; for defstruct, assert, setf, callf
+;; for defstruct, assert, setf, callf, loop
 (require 'cl)
 
 ;;; declarations
@@ -216,63 +216,118 @@ Such improper lists are produced by `list*'."
       (nthcdr len cell))))
 
 ;;;###autoload
-(defun list-utils-make-proper-copy (list)
+(defun list-utils-make-proper-copy (list &optional tree recur-internal)
   "Copy a cons cell or improper LIST into a proper list.
 
-Improper lists consist of proper lists consed onto a final
+If optional TREE is non-nil, traverse LIST, making proper
+copies of any improper lists contained within.
+
+Optional RECUR-INTERNAL is for internal use only.
+
+Improper lists consist of proper lists consed to a final
 element, and are produced by `list*'."
-  (assert (listp list) nil "LIST is not a list")
-  (let ((tail (list-utils-cons-cell-p list)))
-    (cond
-      (tail
-       (append
-        (subseq list 0 (safe-length list))
-        (list tail)))
-      (t
-       (copy-sequence list)))))
+  (assert (or recur-internal (listp list)) nil "LIST is not a list")
+  (cond
+    ((not tree)
+     (let ((tail (list-utils-cons-cell-p list)))
+       (cond
+         (tail
+          (append
+           (subseq list 0 (safe-length list))
+           (list tail)))
+         (t
+          (copy-sequence list)))))
+    ((consp list)
+     (mapcar #'(lambda (elt)
+                 (list-utils-make-proper-copy elt 'tree 'recur))
+             (list-utils-make-proper-copy list nil 'recur)))
+    (t
+     list)))
 
 ;;;###autoload
-(defun list-utils-make-proper-inplace (list)
+(defun list-utils-make-proper-inplace (list &optional tree recur-internal)
   "Make a cons cell or improper LIST into a proper list.
 
-Improper lists consist of proper lists consed onto a final
+Improper lists consist of proper lists consed to a final
 element, and are produced by `list*'.
 
+If optional TREE is non-nil, traverse LIST, making any
+improper lists contained within into proper lists.
+
+Optional RECUR-INTERNAL is for internal use only.
+
 Modifies LIST and returns the modified value."
-  (assert (listp list) nil "LIST is not a list")
-  (when (list-utils-cons-cell-p list)
-    (callf list (nthcdr (safe-length list) list)))
-  list)
+  (assert (or recur-internal (listp list)) nil "LIST is not a list")
+  (cond
+    ((not tree)
+     (when (list-utils-cons-cell-p list)
+       (callf list (nthcdr (safe-length list) list)))
+     list)
+    ((consp list)
+     (loop for elt in (list-utils-make-proper-inplace list nil 'recur)
+           do (list-utils-make-proper-inplace elt 'tree 'recur))
+     list)
+    (t
+     list)))
 (define-obsolete-function-alias 'list-utils-make-proper 'list-utils-make-proper-inplace)
 
 ;;;###autoload
-(defun list-utils-make-improper-copy (list)
+(defun list-utils-make-improper-copy (list &optional tree recur-internal)
   "Copy a proper LIST into an improper list.
 
-Improper lists consist of proper lists consed onto a final
-element, and are produced by `list*'."
-  (assert (listp list) nil "LIST is not a list")
-  (assert (> (safe-length list) 1) nil "LIST has only one element")
-  (let ((tail (list-utils-cons-cell-p list)))
-    (cond
-      (tail
-       (copy-list list))
-      (t
-       (apply 'list* list)))))
-
-;;;###autoload
-(defun list-utils-make-improper-inplace (list)
-  "Make proper LIST into an improper list.
-
-Improper lists consist of proper lists consed onto a final
+Improper lists consist of proper lists consed to a final
 element, and are produced by `list*'.
 
+If optional TREE is non-nil, traverse LIST, making proper
+copies of any improper lists contained within.
+
+Optional RECUR-INTERNAL is for internal use only."
+  (assert (or recur-internal (listp list)) nil "LIST is not a list")
+  (assert (or recur-internal (> (safe-length list) 1)) nil "LIST has only one element")
+  (cond
+    ((not tree)
+     (let ((tail (list-utils-cons-cell-p list)))
+       (cond
+         (tail
+          (copy-list list))
+         (t
+          (apply 'list* list)))))
+    ((and (consp list)
+          (> (safe-length list) 1))
+     (apply 'list*
+            (mapcar #'(lambda (elt)
+                        (list-utils-make-improper-copy elt 'tree 'recur))
+                    (list-utils-make-proper-copy list nil 'recur))))
+    (t
+     list)))
+
+;;;###autoload
+(defun list-utils-make-improper-inplace (list &optional tree recur-internal)
+  "Make proper LIST into an improper list.
+
+Improper lists consist of proper lists consed to a final
+element, and are produced by `list*'.
+
+If optional TREE is non-nil, traverse LIST, making any
+proper lists contained within into improper lists.
+
+Optional RECUR-INTERNAL is for internal use only.
+
 Modifies LIST and returns the modified value."
-  (assert (listp list) nil "LIST is not a list")
-  (unless (list-utils-cons-cell-p list)
-    (assert (> (safe-length list) 1) nil "LIST has only one element")
-    (setcdr (last list 2) (car (last list))))
-  list)
+  (assert (or recur-internal (listp list)) nil "LIST is not a list")
+  (assert (or recur-internal (> (safe-length list) 1)) nil "LIST has only one element")
+  (cond
+    ((not tree)
+     (unless (list-utils-cons-cell-p list)
+       (setcdr (last list 2) (car (last list))))
+     list)
+    ((and (consp list)
+          (> (safe-length list) 1))
+     (loop for elt in (list-utils-make-improper-inplace list nil 'recur)
+           do (list-utils-make-improper-inplace elt 'tree 'recur))
+     list)
+    (t
+     list)))
 (define-obsolete-function-alias 'list-utils-make-improper 'list-utils-make-improper-inplace)
 
 ;;;###autoload

@@ -132,6 +132,82 @@
     (should
      (equal proper copy))))
 
+(ert-deftest list-utils-make-proper-copy-07 nil
+  "With 'tree. Already proper"
+  (let* ((proper '(a b c d e f))
+         (copy (copy-tree proper)))
+    (should
+     (equal proper copy))
+    (should
+     (equal proper
+            (list-utils-make-proper-copy copy 'tree)))
+    (should
+     (equal proper copy))))
+
+(ert-deftest list-utils-make-proper-copy-08 nil
+  "With 'tree. nil"
+  (should-not
+   (list-utils-make-proper-copy nil 'tree)))
+
+(ert-deftest list-utils-make-proper-copy-09 nil
+  "With 'tree. Non-list"
+  (should-error
+   (list-utils-make-proper-copy 1)))
+
+(ert-deftest list-utils-make-proper-copy-10 nil
+  "With 'tree. Two elt cons"
+  (let* ((proper '(1 2))
+         (improper (apply 'list* proper))
+         (backup (copy-tree improper)))
+    (should-not
+     (equal proper improper))
+    (should
+     (equal proper
+            (list-utils-make-proper-copy improper 'tree)))
+    (should
+     ;; was not changed inplace
+     (equal backup improper))))
+
+(ert-deftest list-utils-make-proper-copy-11 nil
+  "With 'tree. Multi-elt improper list"
+  (let* ((proper '(a b c d e f))
+         (improper (apply 'list* proper))
+         (backup (copy-tree improper)))
+    (should-not
+     (equal proper improper))
+    (should
+     (equal proper
+            (list-utils-make-proper-copy improper 'tree)))
+    (should
+     ;; was not changed inplace
+     (equal backup improper))))
+
+(ert-deftest list-utils-make-proper-copy-12 nil
+  "With 'tree. Single-elt list"
+  (let* ((proper '(1))
+         (copy (copy-tree proper)))
+    (should
+     (equal proper copy))
+    (should
+     (equal proper
+            (list-utils-make-proper-copy copy 'tree)))
+    (should
+     (equal proper copy))))
+
+(ert-deftest list-utils-make-proper-copy-13 nil
+  "With 'tree. Deep structure."
+  (let* ((proper '(a (b) (c d) (e (f g h) i) ((j k) l) m))
+         (improper '(a (b) (c . d) (e (f g . h) . i) ((j . k) . l) . m))
+         (backup (copy-tree improper)))
+    (should-not
+     (equal proper improper))
+    (should
+     (equal proper
+            (list-utils-make-proper-copy improper 'tree)))
+    (should
+     ;; was not changed inplace
+     (equal backup improper))))
+
 
 ;;; list-utils-make-proper-inplace
 
@@ -195,6 +271,79 @@
     (should
      (equal proper copy))))
 
+(ert-deftest list-utils-make-proper-inplace-07 nil
+  "With 'tree. Already proper"
+  (let* ((proper '(a b c d e f))
+         (copy (copy-tree proper)))
+    (should
+     (equal proper copy))
+    (should
+     (equal proper
+            (list-utils-make-proper-inplace copy 'tree)))
+    (should
+     (equal proper copy))))
+
+(ert-deftest list-utils-make-proper-inplace-08 nil
+  "With 'tree. nil"
+  (should-not
+   (list-utils-make-proper-inplace nil 'tree)))
+
+(ert-deftest list-utils-make-proper-inplace-09 nil
+  "With 'tree. Non-list"
+  (should-error
+   (list-utils-make-proper-inplace 1 'tree)))
+
+(ert-deftest list-utils-make-proper-inplace-10 nil
+  "With 'tree. Two elt cons"
+  (let* ((proper '(1 2))
+         (improper (apply 'list* proper)))
+    (should-not
+     (equal proper improper))
+    (should
+     (equal proper
+            (list-utils-make-proper-inplace improper 'tree)))
+    (should
+     ;; was changed inplace
+     (equal proper improper))))
+
+(ert-deftest list-utils-make-proper-inplace-11 nil
+  "With 'tree. Multi-elt improper list"
+  (let* ((proper '(a b c d e f))
+         (improper (apply 'list* proper)))
+    (should-not
+     (equal proper improper))
+    (should
+     (equal proper
+            (list-utils-make-proper-inplace improper 'tree)))
+    (should
+     ;; was changed inplace
+     (equal proper improper))))
+
+(ert-deftest list-utils-make-proper-inplace-12 nil
+  "With 'tree. Single-elt list"
+  (let* ((proper '(1))
+         (copy (copy-tree proper)))
+    (should
+     (equal proper copy))
+    (should
+     (equal proper
+            (list-utils-make-proper-inplace copy 'tree)))
+    (should
+     (equal proper copy))))
+
+(ert-deftest list-utils-make-proper-inplace-13 nil
+  "With 'tree. Deep structure."
+  (let* ((proper '(a (b) (c d) (e (f g h) i) ((j k) l) m))
+         (improper '(a (b) (c . d) (e (f g . h) . i) ((j . k) . l) . m)))
+    (should-not
+     (equal proper improper))
+    (should
+     (equal proper
+            (list-utils-make-proper-inplace improper 'tree)))
+    (should
+     ;; was changed inplace
+     (equal proper improper))))
+
 
 ;;; list-utils-make-improper-copy
 
@@ -257,6 +406,79 @@
     (should-error
      (list-utils-make-improper-copy copy))))
 
+(ert-deftest list-utils-make-improper-copy-07 nil
+  "With 'tree. Already improper"
+  (let* ((improper '(1 2 3 4 5 . 6))
+         (copy (copy-tree improper)))
+    (should
+     (equal improper copy))
+    (should
+     (equal improper
+            (list-utils-make-improper-copy copy 'tree)))
+    (should
+     (equal improper copy))))
+
+(ert-deftest list-utils-make-improper-copy-08 nil
+  "With 'tree. Nil"
+  (should-error
+   (list-utils-make-improper-copy nil 'tree)))
+
+(ert-deftest list-utils-make-improper-copy-09 nil
+  "With 'tree. Non-list"
+  (should-error
+   (list-utils-make-improper-copy 1 'tree)))
+
+(ert-deftest list-utils-make-improper-copy-10 nil
+  "With 'tree. Two elt list"
+  (let* ((proper '(1 2))
+         (improper (apply 'list* proper))
+         (backup (copy-tree proper)))
+    (should-not
+     (equal improper proper))
+    (should
+     (equal improper
+            (list-utils-make-improper-copy proper 'tree)))
+    (should
+     ;; was not changed inplace
+     (equal backup proper))))
+
+(ert-deftest list-utils-make-improper-copy-11 nil
+  "With 'tree. Multi-elt list"
+  (let* ((proper '(a b c d e f))
+         (improper (apply 'list* proper))
+         (backup (copy-tree proper)))
+    (should-not
+     (equal improper proper))
+    (should
+     (equal improper
+            (list-utils-make-improper-copy proper 'tree)))
+    (should
+     ;; was not changed inplace
+     (equal backup proper))))
+
+(ert-deftest list-utils-make-improper-copy-12 nil
+  "With 'tree. Single-elt list"
+  (let* ((proper '(1))
+         (copy (copy-tree proper)))
+    (should
+     (equal proper copy))
+    (should-error
+     (list-utils-make-improper-copy copy 'tree))))
+
+(ert-deftest list-utils-make-improper-copy-13 nil
+  "With 'tree. Deep structure."
+  (let* ((proper '(a (b) (c d) (e (f g h) i) ((j k) l) m))
+         (improper '(a (b) (c . d) (e (f g . h) . i) ((j . k) . l) . m))
+         (backup (copy-tree proper)))
+    (should-not
+     (equal improper proper))
+    (should
+     (equal improper
+            (list-utils-make-improper-copy proper 'tree)))
+    (should
+     ;; was not changed inplace
+     (equal backup proper))))
+
 
 ;;; list-utils-make-improper-inplace
 
@@ -316,6 +538,76 @@
      (equal proper copy))
     (should-error
      (list-utils-make-improper-inplace copy))))
+
+(ert-deftest list-utils-make-improper-inplace-07 nil
+  "With 'tree. Already improper"
+  (let* ((improper '(1 2 3 4 5 . 6))
+         (copy (copy-tree improper)))
+    (should
+     (equal improper copy))
+    (should
+     (equal improper
+            (list-utils-make-improper-inplace copy 'tree)))
+    (should
+     (equal improper copy))))
+
+(ert-deftest list-utils-make-improper-inplace-08 nil
+  "With 'tree. Nil"
+  (should-error
+   (list-utils-make-improper-inplace nil 'tree)))
+
+(ert-deftest list-utils-make-improper-inplace-09 nil
+  "With 'tree. Non-list"
+  (should-error
+   (list-utils-make-improper-inplace 1 'tree)))
+
+(ert-deftest list-utils-make-improper-inplace-10 nil
+  "With 'tree. Two elt list"
+  (let* ((proper '(1 2))
+         (improper (apply 'list* proper)))
+    (should-not
+     (equal improper proper))
+    (should
+     (equal improper
+            (list-utils-make-improper-inplace proper 'tree)))
+    (should
+     ;; was changed inplace
+     (equal improper proper))))
+
+(ert-deftest list-utils-make-improper-inplace-11 nil
+  "With 'tree. Multi-elt list"
+  (let* ((proper '(a b c d e f))
+         (improper (apply 'list* proper)))
+    (should-not
+     (equal improper proper))
+    (should
+     (equal improper
+            (list-utils-make-improper-inplace proper 'tree)))
+    (should
+     ;; was changed inplace
+     (equal improper proper))))
+
+(ert-deftest list-utils-make-improper-inplace-12 nil
+  "With 'tree. Single-elt list"
+  (let* ((proper '(1))
+         (copy (copy-tree proper)))
+    (should
+     (equal proper copy))
+    (should-error
+     (list-utils-make-improper-inplace copy 'tree))))
+
+(ert-deftest list-utils-make-improper-inplace-13 nil
+  "With 'tree. Deep structure."
+  (let* ((proper '(a (b) (c d) (e (f g h) i) ((j k) l) m))
+         (improper '(a (b) (c . d) (e (f g . h) . i) ((j . k) . l) . m)))
+    (should-not
+     (equal improper proper))
+    (should
+     (equal improper
+            (list-utils-make-improper-inplace proper 'tree)))
+    (should
+     ;; was not changed inplace
+     (equal improper proper))))
 
 
 ;;; list-utils-cyclic-length
