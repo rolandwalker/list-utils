@@ -54,6 +54,7 @@ The following functions are provided:
 	list-utils-cyclic-p
 	list-utils-cyclic-subseq
 	list-utils-make-linear-copy
+	list-utils-make-linear-inplace
 	list-utils-safe-length
 	list-utils-depth
 	list-utils-flatten

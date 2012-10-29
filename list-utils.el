@@ -59,6 +59,7 @@
 ;;     `list-utils-cyclic-p'
 ;;     `list-utils-cyclic-subseq'
 ;;     `list-utils-make-linear-copy'
+;;     `list-utils-make-linear-inplace'
 ;;     `list-utils-safe-length'
 ;;     `list-utils-depth'
 ;;     `list-utils-flatten'
@@ -271,7 +272,7 @@ calculated from LIST."
 The first element of the cyclic structure is not guaranteed to be
 first element of the return value unless FROM-START is non-nil.
 
-To linearize the return value, use `list-utils-flatten'.
+To linearize the return value, use `list-utils-make-linear-inplace'.
 
 If there is no cycle in LIST, return nil."
   (cond
@@ -366,6 +367,25 @@ linearized copies of any cyclic lists contained within."
      (mapcar #'(lambda (elt)
                  (list-utils-make-linear-copy elt 'tree))
              (list-utils-make-linear-copy list)))
+    (t
+     list)))
+
+;;;###autoload
+(defun list-utils-make-linear-inplace (list &optional tree)
+  "Linearize LIST, which may be cyclic.
+
+Modifies LIST and returns the modified value.
+
+If optional TREE is non-nil, traverse LIST, linearizing any
+cyclic lists contained within."
+  (cond
+    ((not tree)
+     (setf (nthcdr (list-utils-safe-length list) list) nil)
+     list)
+    ((consp list)
+     (mapcar #'(lambda (elt)
+                 (list-utils-make-linear-inplace elt 'tree))
+             (list-utils-make-linear-inplace list)))
     (t
      list)))
 
