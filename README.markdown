@@ -12,14 +12,21 @@ Quickstart
 (require 'list-utils)
  
 (list-utils-flatten '(1 2 (3 4 (5 6 7))))
+;; '(1 2 3 4 5 6 7)
+ 
+(list-utils-depth '(1 2 (3 4 (5 6 7))))
+;; 3
  
 (let ((cyclic-list '(1 2 3 4 5 6 7)))
   (nconc cyclic-list (cdr cyclic-list))
-  (list-utils-flatten cyclic-list))
+  (list-utils-make-linear-inplace cyclic-list))
+;; '(1 2 3 4 5 6 7)
  
 (list-utils-cyclic-p '(1 2 3))
+;; nil
  
 (list-utils-plist-del '(:one 1 :two 2 :three 3) :two)
+;; '(:one 1 :three 3)
 ```
 
 Explanation
@@ -79,7 +86,7 @@ Emacs can find it, and add the following to your ~/.emacs file:
 Notes
 -----
 
-This library includes an implementation of the classic LISP
+This library includes an implementation of the classic Lisp
 `tconc` which is outside the `list-utils-` namespace.
 
 Compatibility and Requirements
