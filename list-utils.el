@@ -158,7 +158,9 @@
 (defgroup list-utils nil
   "List-manipulation utility functions."
   :version "0.3.0"
-  :link '(emacs-commentary-link "list-utils")
+  :link '(emacs-commentary-link :tag "Commentary" "list-utils")
+  :link '(url-link :tag "Github" "http://github.com/rolandwalker/list-utils")
+  :link '(url-link :tag "EmacsWiki" "http://emacswiki.org/emacs/ListUtils")
   :prefix "list-utils-"
   :group 'extensions)
 
