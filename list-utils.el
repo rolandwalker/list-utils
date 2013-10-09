@@ -865,6 +865,35 @@ LIST1.
 Performance: see notes under `list-utils-and'."
   (append (list-utils-not list1 list2 test hint flip)
           (list-utils-not list2 list1 test nil  flip)))
+
+;;;###autoload
+(defun list-utils-uniq (list &optional test hint)
+  "Return a uniquified copy of LIST, preserving order.
+
+This is similar to `cl-remove-duplicates' (or `remove-duplicates')
+from the cl library, except that `list-utils-uniq' preserves order,
+and performs better for large lists.  Order will follow LIST.
+
+TEST is an optional comparison function in the form of a
+hash-table-test.  The default is `eql'.  Other valid values
+include `eq' (built-in), `equal' (built-in), `list-utils-htt-='
+\(numeric), `list-utils-htt-case-fold-equal' (case-insensitive).
+See `define-hash-table-test' to define your own tests.
+
+HINT is an optional micro-optimization, predicting the size of
+LIST.
+
+Performance: see notes under `list-utils-and'."
+  (let ((saw (make-hash-table
+              :test (or test 'eql)
+              :size (or hint (safe-length list)))))
+    (delq nil (mapcar #'(lambda (elt)
+                          (unless (gethash elt saw)
+                            (progn
+                              (puthash elt t saw)
+                              elt)))
+                      list))))
+
 ;;; alists
 
 ;;;###autoload

@@ -3,6 +3,8 @@
 
 (eval-and-compile
   (require 'cl)
+  (unless (fboundp 'cl-remove-duplicates)
+    (defalias 'cl-remove-duplicates 'remove-duplicates))
   (unless (fboundp 'cl-set-difference)
     (defalias 'cl-set-difference 'set-difference))
   (unless (fboundp 'cl-set-exclusive-or)
@@ -1951,6 +1953,76 @@
         (list-2 (reverse (number-sequence 4 10009))))
     (should (equal (sort (list-utils-uniq (list-utils-xor list-2 list-1)) 'list-utils-soft-string-lessp)
                    (sort (list-utils-uniq (list-utils-xor list-1 list-2)) 'list-utils-soft-string-lessp)))))
+
+
+;;; list-utils-uniq
+
+(ert-deftest list-utils-uniq-01 nil
+  "UNIQ operation on a list"
+  (let ((list '(A a a 8 8 1 2 4 3 3 3 4.0 5 6 7 9 9 5)))
+    (should (equal '(A a 8 1 2 4 3 4.0 5 6 7 9)
+                   (list-utils-uniq list)))))
+
+(ert-deftest list-utils-uniq-02 nil
+  "UNIQ operation with size hint, should be identical"
+  (let ((list '(A a a 8 8 1 2 4 3 3 3 4.0 5 6 7 9 9 5)))
+    (should (equal (list-utils-uniq list)
+                   (list-utils-uniq list nil 17)))))
+
+(ert-deftest list-utils-uniq-03 nil
+  "UNIQ operation with numeric hash-table-test"
+  (let ((list '(A a a 8 8 1 2 4 3 3 3 4.0 5 6 7 9 9 5)))
+    (should (equal '(A a 8 1 2 4 3 5 6 7 9) ; no element 4.0
+                   (list-utils-uniq list 'list-utils-htt-=)))))
+
+(ert-deftest list-utils-uniq-04 nil
+  "UNIQ operation with case-insensitive hash-table-test"
+  (let ((list '(A a a 8 8 1 2 4 3 3 3 4.0 5 6 7 9 9 5)))
+    (should (equal '(A 8 1 2 4 3 4.0 5 6 7 9) ; no element a
+                   (list-utils-uniq list 'list-utils-htt-case-fold-equal)))))
+
+(ert-deftest list-utils-uniq-05 nil
+  "UNIQ operation should be identical to `remove-duplicates' after sort"
+  (let ((list '(A a a 8 8 1 2 4 3 3 3 4.0 5 6 7 9 9 5)))
+    (should (equal (sort (remove-duplicates list) 'list-utils-soft-string-lessp)
+                   (sort (list-utils-uniq list) 'list-utils-soft-string-lessp)))))
+
+(ert-deftest list-utils-uniq-06 nil
+  "UNIQ operation with a large list"
+  (let ((list (append (number-sequence 1 10000) (reverse (number-sequence 4 10009)))))
+    (should (equal (append (number-sequence 1 10000) (reverse (number-sequence 10001 10009)))
+                   (list-utils-uniq list)))))
+
+(ert-deftest list-utils-uniq-07 nil
+  "UNIQ operation with large list and size hint, should be identical"
+  (let ((list (append (number-sequence 1 10000) (reverse (number-sequence 4 10009)))))
+    (should (equal (list-utils-uniq list)
+                   (list-utils-uniq list nil 10000)))))
+
+(ert-deftest list-utils-uniq-08 nil
+  "UNIQ operation with large list and numeric hash-table-test"
+  (let ((list (append (number-sequence 1 10000) (mapcar 'float (reverse (number-sequence 4 10009))))))
+    (should (equal (append (number-sequence 1 10000) (mapcar 'float (reverse (number-sequence 10001 10009))))
+                   (list-utils-uniq list 'list-utils-htt-=)))))
+
+;; @@@ Todo: figure out what is really the expected result, when casefolding
+;;     across so many characters/languages.  That's a complex task, but can
+;;     be defined against the results of some other runtime.  The result from
+;;     Emacs is only 1674 chars, which seems quite low.  In any case, no
+;;     case-folding was applied against the test target set, so in principle
+;;     this should not be expected to pass.
+(ert-deftest list-utils-uniq-09 nil
+  "UNIQ operation with large list and case-insensitive hash-table-test"
+  :expected-result :failed
+  (let ((list (mapcar 'char-to-string (append (number-sequence 1 10000) (reverse (number-sequence 4 10009))))))
+    (should (equal (mapcar 'char-to-string (append (number-sequence 1 10000) (reverse (number-sequence 10001 10009))))
+                   (list-utils-uniq list 'list-utils-htt-case-fold-equal)))))
+
+(ert-deftest list-utils-uniq-10 nil
+  "UNIQ operation with large list should be identical to `remove-duplicates' after sort"
+  (let ((list (append (number-sequence 1 10000) (reverse (number-sequence 4 10009)))))
+    (should (equal (sort (list-utils-uniq (remove-duplicates list)) 'list-utils-soft-string-lessp)
+                   (sort (list-utils-uniq (list-utils-uniq list)) 'list-utils-soft-string-lessp)))))
 
 
 ;;; list-utils-plist-reverse
