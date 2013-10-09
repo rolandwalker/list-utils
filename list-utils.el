@@ -159,7 +159,7 @@
   "List-manipulation utility functions."
   :version "0.3.0"
   :link '(emacs-commentary-link :tag "Commentary" "list-utils")
-  :link '(url-link :tag "Github" "http://github.com/rolandwalker/list-utils")
+  :link '(url-link :tag "GitHub" "http://github.com/rolandwalker/list-utils")
   :link '(url-link :tag "EmacsWiki" "http://emacswiki.org/emacs/ListUtils")
   :prefix "list-utils-"
   :group 'extensions)
@@ -422,8 +422,8 @@ If LIST is completely linear, return 0."
   "Return non-nil if LIST contains any cyclic structures.
 
 If optional PERFECT is set, only return non-nil if LIST is a
-perfect non-branching cycle in the last element points to the
-first."
+perfect non-branching cycle in which the last element points
+to the first."
   (let ((cycle (list-utils-cyclic-subseq list)))
     (when (or (not perfect)
               (not (list-utils-linear-subseq list (list-utils-cyclic-length cycle))))
@@ -745,7 +745,8 @@ This functionality overlaps with the undocumented `cl-do-remf'."
 ;; End:
 ;;
 ;; LocalWords: ListUtils ARGS alist utils nconc tconc defstruct setf
-;; LocalWords: plists PLIST setq autoloading plist callf
+;; LocalWords: plists PLIST setq autoloading plist callf alists
+;; LocalWords: inplace
 ;;
 
 ;;; list-utils.el ends here
