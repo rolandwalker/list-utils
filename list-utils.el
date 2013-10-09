@@ -150,9 +150,14 @@
 ;; for defstruct, assert, setf, callf, loop
 (require 'cl)
 
+(autoload 'string-utils-stringify-anything  "string-utils" "Coerce any object OBJ into a string.")
+(autoload 'string-utils-compress-whitespace "string-utils" "Return STR-VAL with all contiguous whitespace compressed to SEPARATOR.")
+
 ;;; declarations
 
 (declare-function list-utils-cyclic-length "list-utils.el")
+(declare-function string-utils-stringify-anything "string-utils.el")
+(declare-function string-utils-compress-whitespace "string-utils.el")
 
 ;;;###autoload
 (defgroup list-utils nil

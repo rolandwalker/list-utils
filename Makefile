@@ -33,6 +33,9 @@ TEST_DIR=ert-tests
 TEST_DEP_1=ert
 TEST_DEP_1_STABLE_URL=http://bzr.savannah.gnu.org/lh/emacs/emacs-24/download/head:/ert.el-20110112160650-056hnl9qhpjvjicy-2/ert.el
 TEST_DEP_1_LATEST_URL=https://raw.github.com/emacsmirror/emacs/master/lisp/emacs-lisp/ert.el
+TEST_DEP_2=string-utils
+TEST_DEP_2_STABLE_URL=https://raw.github.com/rolandwalker/string-utils/6b9b4e6a7378dc653b2dec532512839cd5eb8bb2/string-utils.el
+TEST_DEP_2_LATEST_URL=https://raw.github.com/rolandwalker/string-utils/master/string-utils.el
 
 .PHONY : build dist not-dirty pkg-version downloads downloads-latest autoloads \
  test-autoloads test-travis test test-prep test-batch test-interactive         \
@@ -61,11 +64,23 @@ test-dep-1 :
 	$(RESOLVED_EMACS) $(EMACS_BATCH)  -L . -L .. -l '$(TEST_DEP_1)' || \
 	(echo "Can't load test dependency $(TEST_DEP_1).el, run 'make downloads' to fetch it" ; exit 1)
 
+test-dep-2 :
+	@cd '$(TEST_DIR)'                                 && \
+	$(RESOLVED_EMACS) $(EMACS_BATCH)  -L . -L .. --eval  \
+	    "(progn                                          \
+	      (setq package-load-list '(($(TEST_DEP_2) t)))  \
+	      (when (fboundp 'package-initialize)            \
+	       (package-initialize))                         \
+	      (require '$(TEST_DEP_2)))"                  || \
+	(echo "Can't load test dependency $(TEST_DEP_2).el, run 'make downloads' to fetch it" ; exit 1)
+
 downloads :
 	$(CURL) '$(TEST_DEP_1_STABLE_URL)' > '$(TEST_DIR)/$(TEST_DEP_1).el'
+	$(CURL) '$(TEST_DEP_2_STABLE_URL)' > '$(TEST_DIR)/$(TEST_DEP_2).el'
 
 downloads-latest :
 	$(CURL) '$(TEST_DEP_1_LATEST_URL)' > '$(TEST_DIR)/$(TEST_DEP_1).el'
+	$(CURL) '$(TEST_DEP_2_LATEST_URL)' > '$(TEST_DIR)/$(TEST_DEP_2).el'
 
 autoloads :
 	$(RESOLVED_EMACS) $(EMACS_BATCH) --eval              \
@@ -126,7 +141,7 @@ run-pristine :
 	$(RESOLVED_EMACS) $(EMACS_CLEAN) --eval                           \
 	 "(progn                                                          \
 	   (setq package-enable-at-startup nil)                           \
-	   (setq package-load-list nil)                                   \
+	   (setq package-load-list '(($(TEST_DEP_2) t)))                  \
 	   (when (fboundp 'package-initialize)                            \
 	    (package-initialize))                                         \
 	   (cd \"$(WORK_DIR)/$(TEST_DIR)\")                               \
