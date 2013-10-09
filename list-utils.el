@@ -784,6 +784,62 @@ make frequent use of this function."
                                elt))
                          list1))))))
 
+;;;###autoload
+(defun list-utils-not (list1 list2 &optional test hint flip)
+  "Return the elements of LIST1 which are not present in LIST2.
+
+This is similar to `cl-set-difference' (or `set-difference') from
+the cl library, except that `list-utils-not' preserves order and
+performs better for large lists.  Order will follow LIST1.
+Duplicates may be present as in LIST1.
+
+TEST is an optional comparison function in the form of a
+hash-table-test.  The default is `eql'.  Other valid values
+include `eq' (built-in), `equal' (built-in), `list-utils-htt-='
+\(numeric), `list-utils-htt-case-fold-equal' (case-insensitive).
+See `define-hash-table-test' to define your own tests.
+
+HINT is an optional micro-optimization, predicting the size of
+the list to be hashed (LIST2 unless FLIP is set).
+
+When optional FLIP is set, the sense of the comparison is
+reversed, returning elements of LIST2 which are not present in
+LIST1.  When FLIP is set, LIST2 will be the guide for the order
+of the result, and will determine whether duplicates may be
+returned.
+
+Performance: see notes under `list-utils-and'."
+  (when flip
+    (psetq list1 list2 list2 list1))
+  (cond
+    ((null list1)
+     nil)
+    ((null list2)
+     list1)
+    ((equal list1 list2)
+     nil)
+    ;; Todo, for some cases iteration is faster, but is there any
+    ;; heuristic for following this path that isn't itself too
+    ;; expensive? Example where iteration is faster:
+    ;; list1 is (1 2 3), list2 is (1 2 3 ... 1000)
+    ;; ((and nil
+    ;;       (setq member-fn (cdr (assq test list-utils-fast-member-fns))))
+    ;;  (delq nil (mapcar #'(lambda (elt)
+    ;;                        (unless (funcall member-fn elt list2)
+    ;;                          elt))
+    ;;                    list1)))
+    (t
+     (let ((saw (make-hash-table
+                 :test (or test 'eql)
+                 :size (or hint (safe-length list2)))))
+       (mapc #'(lambda (elt)
+                 (puthash elt t saw))
+             list2)
+       (delq nil (mapcar #'(lambda (elt)
+                             (unless (gethash elt saw)
+                               elt))
+                         list1))))))
+
 ;;; alists
 
 ;;;###autoload

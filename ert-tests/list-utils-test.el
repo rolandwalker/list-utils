@@ -3,6 +3,8 @@
 
 (eval-and-compile
   (require 'cl)
+  (unless (fboundp 'cl-set-difference)
+    (defalias 'cl-set-difference 'set-difference))
   (unless (fboundp 'cl-intersection)
     (defalias 'cl-intersection 'intersection)))
 
@@ -1698,6 +1700,121 @@
         (list-2 (reverse (number-sequence 4 10009))))
     (should (equal (sort (list-utils-uniq (cl-intersection list-1 list-2)) 'list-utils-soft-string-lessp)
                    (sort (list-utils-uniq (list-utils-and list-1 list-2)) 'list-utils-soft-string-lessp)))))
+
+
+;;; list-utils-not
+
+(ert-deftest list-utils-not-01 nil
+  "Logical NOT operation on two lists"
+  (let ((list-1 '(A a a 8 8 1 2 3 3 3 4.0 5 6 7 9 9 5))
+        (list-2 '(a b c d 1 2 3 4)))
+    (should (equal '(A 8 8 4.0 5 6 7 9 9 5)
+                   (list-utils-not list-1 list-2)))))
+
+(ert-deftest list-utils-not-02 nil
+  "Logical NOT operation with size hint, should be identical"
+  (let ((list-1 '(A a a 8 8 1 2 3 3 3 4.0 5 6 7 9 9 5))
+        (list-2 '(a b c d 1 2 3 4)))
+    (should (equal (list-utils-not list-1 list-2)
+                   (list-utils-not list-1 list-2 nil 17)))))
+
+(ert-deftest list-utils-not-03 nil
+  "Logical NOT operation with FLIP param"
+  (let ((list-1 '(A a a 8 8 1 2 3 3 3 4.0 5 6 7 9 9 5))
+        (list-2 '(a b c d 1 2 3 4)))
+    (should (equal '(b c d 4)
+                   (list-utils-not list-1 list-2 nil nil 'flip)))))
+
+(ert-deftest list-utils-not-04 nil
+  "Logical NOT operation with FLIP param should be the same as reversing order of list args"
+  (let ((list-1 '(A a a 8 8 1 2 3 3 3 4.0 5 6 7 9 9 5))
+        (list-2 '(a b c d 1 2 3 4)))
+    (should (equal (list-utils-not list-2 list-1)
+                   (list-utils-not list-1 list-2 nil nil 'flip)))))
+
+(ert-deftest list-utils-not-05 nil
+  "Logical NOT operation with numeric hash-table-test"
+  (let ((list-1 '(A a a 8 8 1 2 3 3 3 4.0 5 6 7 9 9 5))
+        (list-2 '(a b c d 1 2 3 4)))
+    (should (equal '(A 8 8 5 6 7 9 9 5) ; no element 4.0
+                   (list-utils-not list-1 list-2 'list-utils-htt-=)))))
+
+(ert-deftest list-utils-not-06 nil
+  "Logical NOT operation with numeric hash-table-test and FLIP param"
+  (let ((list-1 '(A a a 8 8 1 2 3 3 3 4.0 5 6 7 9 9 5))
+        (list-2 '(a b c d 1 2 3 4)))
+    (should (equal '(b c d) ; no element 4
+                   (list-utils-not list-1 list-2 'list-utils-htt-= nil 'flip)))))
+
+(ert-deftest list-utils-not-07 nil
+  "Logical NOT operation with case-insensitive hash-table-test"
+  (let ((list-1 '(A a a 8 8 1 2 3 3 3 4.0 5 6 7 9 9 5))
+        (list-2 '(a b c d 1 2 3 4)))
+    (should (equal '(8 8 4.0 5 6 7 9 9 5) ; no element A
+                   (list-utils-not list-1 list-2 'list-utils-htt-case-fold-equal)))))
+
+(ert-deftest list-utils-not-08 nil
+  "Logical NOT operation with case-insensitive hash-table-test and FLIP param"
+  (let ((list-1 '(A a a 8 8 1 2 3 3 3 4.0 5 6 7 9 9 5))
+        (list-2 '(a b c d 1 2 3 4)))
+    (should (equal '(b c d 4)
+                   (list-utils-not list-1 list-2 'list-utils-htt-case-fold-equal nil 'flip)))))
+
+(ert-deftest list-utils-not-09 nil
+  "Logical NOT operation should be identical to `cl-set-difference' after sort/uniq"
+  (let ((list-1 '(A a a 8 8 1 2 3 3 3 4.0 5 6 7 9 9 5))
+        (list-2 '(a b c d 1 2 3 4)))
+    (should (equal (sort (list-utils-uniq (cl-set-difference list-1 list-2)) 'list-utils-soft-string-lessp)
+                   (sort (list-utils-uniq (list-utils-not list-1 list-2)) 'list-utils-soft-string-lessp)))))
+
+(ert-deftest list-utils-not-10 nil
+  "Logical NOT operation with two large lists"
+  (let ((list-1          (number-sequence 1 10000))
+        (list-2 (reverse (number-sequence 4 10009))))
+    (should (equal (number-sequence 1 3)
+                   (list-utils-not list-1 list-2)))))
+
+(ert-deftest list-utils-not-11 nil
+  "Logical NOT operation with large lists and size hint, should be identical"
+  (let ((list-1          (number-sequence 1 10000))
+        (list-2 (reverse (number-sequence 4 10009))))
+    (should (equal (list-utils-not list-1 list-2)
+                   (list-utils-not list-1 list-2 nil 10000)))))
+
+(ert-deftest list-utils-not-12 nil
+  "Logical NOT operation with large lists and FLIP param"
+  (let ((list-1          (number-sequence 1 10000))
+        (list-2 (reverse (number-sequence 4 10009))))
+    (should (equal (reverse (number-sequence 10001 10009))
+                   (list-utils-not list-1 list-2 nil nil 'flip)))))
+
+(ert-deftest list-utils-not-13 nil
+  "Logical NOT operation with large lists and FLIP param should be the same as reversing order of list args"
+  (let ((list-1          (number-sequence 1 10000))
+        (list-2 (reverse (number-sequence 4 10009))))
+    (should (equal (list-utils-not list-2 list-1)
+                   (list-utils-not list-1 list-2 nil nil 'flip)))))
+
+(ert-deftest list-utils-not-14 nil
+  "Logical NOT operation with large lists and numeric hash-table-test"
+  (let ((list-1                         (number-sequence 1 10000))
+        (list-2 (mapcar 'float (reverse (number-sequence 4 10009)))))
+    (should (equal (number-sequence 1 3)
+                   (list-utils-not list-1 list-2 'list-utils-htt-=)))))
+
+(ert-deftest list-utils-not-15 nil
+  "Logical NOT operation with large lists and case-insensitive hash-table-test"
+  (let ((list-1 (mapcar 'char-to-string          (number-sequence 1 10000)))
+        (list-2 (mapcar 'char-to-string (reverse (number-sequence 4 10009)))))
+    (should (equal (mapcar 'char-to-string (number-sequence 1 3))
+                   (list-utils-not list-1 list-2 'list-utils-htt-case-fold-equal)))))
+
+(ert-deftest list-utils-not-16 nil
+  "Logical NOT operation with large lists should be identical to `cl-set-difference' after sort/uniq"
+  (let ((list-1          (number-sequence 1 10000))
+        (list-2 (reverse (number-sequence 4 10009))))
+    (should (equal (sort (list-utils-uniq (cl-set-difference list-1 list-2)) 'list-utils-soft-string-lessp)
+                   (sort (list-utils-uniq (list-utils-not list-1 list-2)) 'list-utils-soft-string-lessp)))))
 
 
 ;;; list-utils-plist-reverse
