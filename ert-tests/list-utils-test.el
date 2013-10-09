@@ -2098,6 +2098,74 @@
                                             (remove-duplicates list))))))))
 
 
+;;; list-utils-singlets
+
+(ert-deftest list-utils-singlets-01 nil
+  "SINGLETS operation on a list"
+  (let ((list '(A a a 8 8 1 2 4 3 3 3 4.0 5 6 7 9 9 5)))
+    (should (equal '(A 1 2 4 4.0 6 7)
+                   (list-utils-singlets list)))))
+
+(ert-deftest list-utils-singlets-02 nil
+  "SINGLETS operation with size hint, should be identical"
+  (let ((list '(A a a 8 8 1 2 4 3 3 3 4.0 5 6 7 9 9 5)))
+    (should (equal (list-utils-singlets list)
+                   (list-utils-singlets list nil 17)))))
+
+(ert-deftest list-utils-singlets-03 nil
+  "SINGLETS operation with numeric hash-table-test"
+  (let ((list '(A a a 8 8 1 2 4 3 3 3 4.0 5 6 7 9 9 5)))
+    (should (equal '(A 1 2 6 7) ; no elements 4 4.0
+                   (list-utils-singlets list 'list-utils-htt-=)))))
+
+(ert-deftest list-utils-singlets-04 nil
+  "SINGLETS operation with case-insensitive hash-table-test"
+  (let ((list '(A a a 8 8 1 2 4 3 3 3 4.0 5 6 7 9 9 5)))
+    (should (equal '(1 2 4 4.0 6 7) ; no elements A a
+                   (list-utils-singlets list 'list-utils-htt-case-fold-equal)))))
+
+(ert-deftest list-utils-singlets-05 nil
+  "SINGLETS operation should be identical to result composed of other list operations"
+  (let ((list '(A a a 8 8 1 2 4 3 3 3 4.0 5 6 7 9 9 5)))
+    (should (equal (list-utils-singlets list)
+                   (list-utils-not list (list-utils-dupes list))))))
+
+(ert-deftest list-utils-singlets-06 nil
+  "SINGLETS operation with a large list"
+  (let ((list (append (number-sequence 1 10000) (reverse (number-sequence 4 10009)))))
+    (should (equal (append (number-sequence 1 3) (reverse (number-sequence 10001 10009)))
+                   (list-utils-singlets list)))))
+
+(ert-deftest list-utils-singlets-07 nil
+  "SINGLETS operation with large list and size hint, should be identical"
+  (let ((list (append (number-sequence 1 10000) (reverse (number-sequence 4 10009)))))
+    (should (equal (list-utils-singlets list)
+                   (list-utils-singlets list nil 10000)))))
+
+(ert-deftest list-utils-singlets-08 nil
+  "SINGLETS operation with large list and numeric hash-table-test"
+  (let ((list (append (number-sequence 1 10000) (mapcar 'float (reverse (number-sequence 4 10009))))))
+    (should (equal (append (number-sequence 1 3) (mapcar 'float (reverse (number-sequence 10001 10009))))
+                   (list-utils-singlets list 'list-utils-htt-=)))))
+
+;; @@@ Todo: figure out what is really the expected result, casefolding
+;;     across so many characters.  Without applying casefolding to the
+;;     test target set, this should not be expected to work. Length
+;;     of two lists is 12 vs 3.
+(ert-deftest list-utils-singlets-09 nil
+  "SINGLETS operation with large list and case-insensitive hash-table-test"
+  :expected-result :failed
+  (let ((list (mapcar 'char-to-string (append (number-sequence 1 10000) (reverse (number-sequence 4 10009))))))
+    (should (equal (mapcar 'char-to-string (append (number-sequence 1 3) (reverse (number-sequence 10001 10009))))
+                   (list-utils-singlets list 'list-utils-htt-case-fold-equal)))))
+
+(ert-deftest list-utils-singlets-10 nil
+  "SINGLETS operation with large list should be identical to result composed of other list operations"
+  (let ((list (append (number-sequence 1 10000) (reverse (number-sequence 4 10009)))))
+    (should (equal (list-utils-singlets list)
+                   (list-utils-not list (list-utils-dupes list))))))
+
+
 ;;; list-utils-plist-reverse
 
 (ert-deftest list-utils-plist-reverse-01 nil
