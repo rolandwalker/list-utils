@@ -894,6 +894,34 @@ Performance: see notes under `list-utils-and'."
                               elt)))
                       list))))
 
+;;;###autoload
+(defun list-utils-dupes (list &optional test hint)
+  "Return only duplicated elements from LIST, preserving order.
+
+Duplicated elements may still exist in the result: this function
+removes singlets.
+
+TEST is an optional comparison function in the form of a
+hash-table-test.  The default is `eql'.  Other valid values
+include `eq' (built-in), `equal' (built-in), `list-utils-htt-='
+\(numeric), `list-utils-htt-case-fold-equal' (case-insensitive).
+See `define-hash-table-test' to define your own tests.
+
+HINT is an optional micro-optimization, predicting the size of
+LIST.
+
+Performance: see notes under `list-utils-and'."
+  (let ((saw (make-hash-table
+              :test (or test 'eql)
+              :size (or hint (safe-length list)))))
+    (mapc #'(lambda (elt)
+              (puthash elt (if (gethash elt saw) 2 1) saw))
+          list)
+    (delq nil (mapcar #'(lambda (elt)
+                          (when (> (gethash elt saw) 1)
+                            elt))
+                      list))))
+
 ;;; alists
 
 ;;;###autoload

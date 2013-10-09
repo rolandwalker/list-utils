@@ -2025,6 +2025,79 @@
                    (sort (list-utils-uniq (list-utils-uniq list)) 'list-utils-soft-string-lessp)))))
 
 
+;;; list-utils-dupes
+
+(ert-deftest list-utils-dupes-01 nil
+  "DUPES operation on a list"
+  (let ((list '(A a a 8 8 1 2 4 3 3 3 4.0 5 6 7 9 9 5)))
+    (should (equal '(a a 8 8 3 3 3 5 9 9 5)
+                   (list-utils-dupes list)))))
+
+(ert-deftest list-utils-dupes-02 nil
+  "DUPES operation with size hint, should be identical"
+  (let ((list '(A a a 8 8 1 2 4 3 3 3 4.0 5 6 7 9 9 5)))
+    (should (equal (list-utils-dupes list)
+                   (list-utils-dupes list nil 17)))))
+
+(ert-deftest list-utils-dupes-03 nil
+  "DUPES operation with numeric hash-table-test"
+  (let ((list '(A a a 8 8 1 2 4 3 3 3 4.0 5 6 7 9 9 5)))
+    (should (equal '(a a 8 8 4 3 3 3 4.0 5 9 9 5) ; elements 4 / 4.0 present
+                   (list-utils-dupes list 'list-utils-htt-=)))))
+
+(ert-deftest list-utils-dupes-04 nil
+  "DUPES operation with case-insensitive hash-table-test"
+  (let ((list '(A a a 8 8 1 2 4 3 3 3 4.0 5 6 7 9 9 5)))
+    (should (equal '(A a a 8 8 3 3 3 5 9 9 5)     ; element A present
+                   (list-utils-dupes list 'list-utils-htt-case-fold-equal)))))
+
+(ert-deftest list-utils-dupes-05 nil
+  "DUPES operation should be identical to result composed of other list operations"
+  (let ((list '(A a a 8 8 1 2 4 3 3 3 4.0 5 6 7 9 9 5)))
+    (should (equal (list-utils-dupes list)
+                   (list-utils-and list
+                                   (list-utils-singlets
+                                    (append (list-utils-singlets list)
+                                            (remove-duplicates list))))))))
+
+(ert-deftest list-utils-dupes-06 nil
+  "DUPES operation with a large list"
+  (let ((list (append (number-sequence 1 10000) (reverse (number-sequence 4 10009)))))
+    (should (equal (append (number-sequence 4 10000) (reverse (number-sequence 4 10000)))
+                   (list-utils-dupes list)))))
+
+(ert-deftest list-utils-dupes-07 nil
+  "DUPES operation with large list and size hint, should be identical"
+  (let ((list (append (number-sequence 1 10000) (reverse (number-sequence 4 10009)))))
+    (should (equal (list-utils-dupes list)
+                   (list-utils-dupes list nil 10000)))))
+
+(ert-deftest list-utils-dupes-08 nil
+  "DUPES operation with large list and numeric hash-table-test"
+  (let ((list (append (number-sequence 1 10000) (mapcar 'float (reverse (number-sequence 4 10009))))))
+    (should (equal (append (number-sequence 4 10000) (mapcar 'float (reverse (number-sequence 4 10000))))
+                   (list-utils-dupes list 'list-utils-htt-=)))))
+
+;; @@@ Todo: figure out what is really the expected result, casefolding
+;;     across so many characters.  Without applying casefolding to the
+;;     test target set, this should not be expected to work.
+(ert-deftest list-utils-dupes-09 nil
+  "DUPES operation with large list and case-insensitive hash-table-test"
+  :expected-result :failed
+  (let ((list (mapcar 'char-to-string (append (number-sequence 1 10000) (reverse (number-sequence 4 10009))))))
+    (should (equal (mapcar 'char-to-string (append (number-sequence 4 10000) (reverse (number-sequence 4 10000))))
+                   (list-utils-dupes list 'list-utils-htt-case-fold-equal)))))
+
+(ert-deftest list-utils-dupes-10 nil
+  "DUPES operation with large list should be identical to result composed of other list operations"
+  (let ((list (append (number-sequence 1 10000) (reverse (number-sequence 4 10009)))))
+    (should (equal (list-utils-dupes list)
+                   (list-utils-and list
+                                   (list-utils-singlets
+                                    (append (list-utils-singlets list)
+                                            (remove-duplicates list))))))))
+
+
 ;;; list-utils-plist-reverse
 
 (ert-deftest list-utils-plist-reverse-01 nil
