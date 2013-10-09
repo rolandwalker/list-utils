@@ -106,6 +106,8 @@
 ;; TODO
 ;;
 ;;     should list-utils-make-improper accept nil as a special case?
+;;     @@@ spin out hash-table tests into separate library
+;;
 ;;
 ;;; License
 ;;
@@ -168,6 +170,59 @@
   :link '(url-link :tag "EmacsWiki" "http://emacswiki.org/emacs/ListUtils")
   :prefix "list-utils-"
   :group 'extensions)
+
+;;; hash-table tests
+
+(defun list-utils-htt-= (x y)
+  "A comparison function in which `=' floats and integers are identical.
+
+Non-numeric arguments are permitted and will be compared by `equal'.
+
+A hash-table-test is defined with the same name."
+  (if (and (numberp x)
+           (numberp y))
+      (= x y)
+    ;; else
+    (equal x y)))
+
+(define-hash-table-test 'list-utils-htt-=
+                        'list-utils-htt-=
+                        #'(lambda (x)
+                            (sxhash (if (numberp x)
+                                        (float x)
+                                      ;; else
+                                      x))))
+
+(defun list-utils-htt-case-fold-equal (x y)
+  "A string comparison function which ignores case.
+
+Non-string arguments are permitted, and will be compared after
+stringification by `string-utils-stringify-anything'.
+
+A hash-table-test is defined with the same name."
+  (compare-strings (string-utils-stringify-anything x) nil nil
+                   (string-utils-stringify-anything y) nil nil
+                   'ignore-case))
+
+(define-hash-table-test 'list-utils-htt-case-fold-equal
+                        'list-utils-htt-case-fold-equal
+                        #'(lambda (x)
+                            (sxhash (upcase (string-utils-stringify-anything x)))))
+
+(defun list-utils-htt-ignore-whitespace-equal (x y)
+  "A string comparison function which ignores whitespace.
+
+Non-string arguments are permitted, and will be compared after
+stringification by `string-utils-stringify-anything'.
+
+A hash-table-test is defined with the same name."
+  (string-equal (string-utils-compress-whitespace (string-utils-stringify-anything x) nil "")
+                (string-utils-compress-whitespace (string-utils-stringify-anything y) nil "")))
+
+(define-hash-table-test 'list-utils-htt-ignore-whitespace-equal
+                        'list-utils-htt-ignore-whitespace-equal
+                        #'(lambda (x)
+                            (sxhash (string-utils-compress-whitespace (string-utils-stringify-anything x) nil ""))))
 
 ;;; tconc - this section of code is in the public domain
 
