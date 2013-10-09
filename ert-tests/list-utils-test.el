@@ -5,6 +5,8 @@
   (require 'cl)
   (unless (fboundp 'cl-set-difference)
     (defalias 'cl-set-difference 'set-difference))
+  (unless (fboundp 'cl-set-exclusive-or)
+    (defalias 'cl-set-exclusive-or 'set-exclusive-or))
   (unless (fboundp 'cl-intersection)
     (defalias 'cl-intersection 'intersection)))
 
@@ -1815,6 +1817,140 @@
         (list-2 (reverse (number-sequence 4 10009))))
     (should (equal (sort (list-utils-uniq (cl-set-difference list-1 list-2)) 'list-utils-soft-string-lessp)
                    (sort (list-utils-uniq (list-utils-not list-1 list-2)) 'list-utils-soft-string-lessp)))))
+
+
+;;; list-utils-xor
+
+(ert-deftest list-utils-xor-01 nil
+  "Logical XOR operation on two lists"
+  (let ((list-1 '(A a a 8 8 1 2 3 3 3 4.0 5 6 7 9 9 5))
+        (list-2 '(a b c d 1 2 3 4)))
+    (should (equal '(A 8 8 4.0 5 6 7 9 9 5 b c d 4)
+                   (list-utils-xor list-1 list-2)))))
+
+(ert-deftest list-utils-xor-02 nil
+  "Logical XOR operation with size hint, should be identical"
+  (let ((list-1 '(A a a 8 8 1 2 3 3 3 4.0 5 6 7 9 9 5))
+        (list-2 '(a b c d 1 2 3 4)))
+    (should (equal (list-utils-xor list-1 list-2)
+                   (list-utils-xor list-1 list-2 nil 17)))))
+
+(ert-deftest list-utils-xor-03 nil
+  "Logical XOR operation with FLIP param"
+  (let ((list-1 '(A a a 8 8 1 2 3 3 3 4.0 5 6 7 9 9 5))
+        (list-2 '(a b c d 1 2 3 4)))
+    (should (equal '(b c d 4 A 8 8 4.0 5 6 7 9 9 5)
+                   (list-utils-xor list-1 list-2 nil nil 'flip)))))
+
+(ert-deftest list-utils-xor-04 nil
+  "Logical XOR operation with FLIP param should be the same as reversing order of list args"
+  (let ((list-1 '(A a a 8 8 1 2 3 3 3 4.0 5 6 7 9 9 5))
+        (list-2 '(a b c d 1 2 3 4)))
+    (should (equal (list-utils-xor list-2 list-1)
+                   (list-utils-xor list-1 list-2 nil nil 'flip)))))
+
+(ert-deftest list-utils-xor-05 nil
+  "Logical XOR operation with numeric hash-table-test"
+  (let ((list-1 '(A a a 8 8 1 2 3 3 3 4.0 5 6 7 9 9 5))
+        (list-2 '(a b c d 1 2 3 4)))
+    (should (equal '(A 8 8 5 6 7 9 9 5 b c d) ; no element 4
+                   (list-utils-xor list-1 list-2 'list-utils-htt-=)))))
+
+(ert-deftest list-utils-xor-06 nil
+  "Logical XOR operation with numeric hash-table-test and FLIP param"
+  (let ((list-1 '(A a a 8 8 1 2 3 3 3 4.0 5 6 7 9 9 5))
+        (list-2 '(a b c d 1 2 3 4)))
+    (should (equal '(b c d A 8 8 5 6 7 9 9 5) ; no element 4
+                   (list-utils-xor list-1 list-2 'list-utils-htt-= nil 'flip)))))
+
+(ert-deftest list-utils-xor-07 nil
+  "Logical XOR operation with case-insensitive hash-table-test"
+  (let ((list-1 '(A a a 8 8 1 2 3 3 3 4.0 5 6 7 9 9 5))
+        (list-2 '(a b c d 1 2 3 4)))
+    (should (equal '(8 8 4.0 5 6 7 9 9 5 b c d 4)
+                   (list-utils-xor list-1 list-2 'list-utils-htt-case-fold-equal)))))
+
+(ert-deftest list-utils-xor-08 nil
+  "Logical XOR operation with case-insensitive hash-table-test and FLIP param"
+  (let ((list-1 '(A a a 8 8 1 2 3 3 3 4.0 5 6 7 9 9 5))
+        (list-2 '(a b c d 1 2 3 4)))
+    (should (equal '(b c d 4 8 8 4.0 5 6 7 9 9 5)
+                   (list-utils-xor list-1 list-2 'list-utils-htt-case-fold-equal nil 'flip)))))
+
+(ert-deftest list-utils-xor-09 nil
+  "Logical XOR operation should be identical to `cl-set-exclusive-or' after sort/uniq"
+  (let ((list-1 '(A a a 8 8 1 2 3 3 3 4.0 5 6 7 9 9 5))
+        (list-2 '(a b c d 1 2 3 4)))
+    (should (equal (sort (list-utils-uniq (cl-set-exclusive-or list-1 list-2)) 'list-utils-soft-string-lessp)
+                   (sort (list-utils-uniq (list-utils-xor list-1 list-2)) 'list-utils-soft-string-lessp)))))
+
+(ert-deftest list-utils-xor-10 nil
+  "Logical XOR operation should be identical to itself with FLIP param after sort/uniq"
+  (let ((list-1 '(A a a 8 8 1 2 3 3 3 4.0 5 6 7 9 9 5))
+        (list-2 '(a b c d 1 2 3 4)))
+    (should (equal (sort (list-utils-uniq (list-utils-xor list-2 list-1)) 'list-utils-soft-string-lessp)
+                   (sort (list-utils-uniq (list-utils-xor list-1 list-2)) 'list-utils-soft-string-lessp)))))
+
+(ert-deftest list-utils-xor-11 nil
+  "Logical XOR operation with two large lists"
+  (let ((list-1          (number-sequence 1 10000))
+        (list-2 (reverse (number-sequence 4 10009))))
+    (should (equal (append (number-sequence 1 3) (reverse (number-sequence 10001 10009)))
+                   (list-utils-xor list-1 list-2)))))
+
+(ert-deftest list-utils-xor-12 nil
+  "Logical XOR operation with large lists and size hint, should be identical"
+  (let ((list-1          (number-sequence 1 10000))
+        (list-2 (reverse (number-sequence 4 10009))))
+    (should (equal (list-utils-xor list-1 list-2)
+                   (list-utils-xor list-1 list-2 nil 10000)))))
+
+(ert-deftest list-utils-xor-13 nil
+  "Logical XOR operation with large lists and FLIP param"
+  (let ((list-1          (number-sequence 1 10000))
+        (list-2 (reverse (number-sequence 4 10009))))
+    (should (equal (append (reverse (number-sequence 10001 10009)) (number-sequence 1 3))
+                   (list-utils-xor list-1 list-2 nil nil 'flip)))))
+
+(ert-deftest list-utils-xor-14 nil
+  "Logical XOR operation with large lists and FLIP param should be the same as reversing order of list args"
+  (let ((list-1          (number-sequence 1 10000))
+        (list-2 (reverse (number-sequence 4 10009))))
+    (should (equal (list-utils-xor list-2 list-1)
+                   (list-utils-xor list-1 list-2 nil nil 'flip)))))
+
+(ert-deftest list-utils-xor-15 nil
+  "Logical XOR operation with large lists and numeric hash-table-test"
+  (let ((list-1                         (number-sequence 1 10000))
+        (list-2 (mapcar 'float (reverse (number-sequence 4 10009)))))
+    (should (equal (append (number-sequence 1 3) (mapcar 'float (reverse (number-sequence 10001 10009))))
+                   (list-utils-xor list-1 list-2 'list-utils-htt-=)))))
+
+;; @@@ todo: figure out the expected case-folded behavior for these Unicode characters.
+;;     This fails -- the output is reduced to only 3 characters, instead of the expected 12.
+;;     At first look, it seems like a bug/limitation in Emacs.  In any case, no casefolding
+;;     is applied to the test target set, so in principle this should be expected to fail.
+(ert-deftest list-utils-xor-16 nil
+  "Logical XOR operation with large lists and case-insensitive hash-table-test"
+  :expected-result :failed
+  (let ((list-1 (mapcar 'char-to-string          (number-sequence 1 10000)))
+        (list-2 (mapcar 'char-to-string (reverse (number-sequence 4 10009)))))
+    (should (equal (mapcar 'char-to-string (append (number-sequence 1 3) (reverse (number-sequence 10001 10009))))
+                   (list-utils-xor list-1 list-2 'list-utils-htt-case-fold-equal)))))
+
+(ert-deftest list-utils-xor-17 nil
+  "Logical XOR operation with large lists should be identical to `cl-set-exclusive-or' after sort/uniq"
+  (let ((list-1          (number-sequence 1 10000))
+        (list-2 (reverse (number-sequence 4 10009))))
+    (should (equal (sort (list-utils-uniq (cl-set-exclusive-or list-1 list-2)) 'list-utils-soft-string-lessp)
+                   (sort (list-utils-uniq (list-utils-xor list-1 list-2)) 'list-utils-soft-string-lessp)))))
+
+(ert-deftest list-utils-xor-18 nil
+  "Logical XOR operation with large lists should be identical to reverse-XOR-operation after sort/uniq"
+  (let ((list-1          (number-sequence 1 10000))
+        (list-2 (reverse (number-sequence 4 10009))))
+    (should (equal (sort (list-utils-uniq (list-utils-xor list-2 list-1)) 'list-utils-soft-string-lessp)
+                   (sort (list-utils-uniq (list-utils-xor list-1 list-2)) 'list-utils-soft-string-lessp)))))
 
 
 ;;; list-utils-plist-reverse

@@ -840,6 +840,31 @@ Performance: see notes under `list-utils-and'."
                                elt))
                          list1))))))
 
+;;;###autoload
+(defun list-utils-xor (list1 list2 &optional test hint flip)
+  "Return elements which are only present in either LIST1 or LIST2.
+
+This is similar to `cl-set-exclusive-or' (or `set-exclusive-or')
+from the cl library, except that `list-utils-xor' preserves order,
+and performs better for large lists.  Order will follow LIST1,
+then LIST2.  Duplicates may be present as in LIST1 or LIST2.
+
+TEST is an optional comparison function in the form of a
+hash-table-test.  The default is `eql'.  Other valid values
+include `eq' (built-in), `equal' (built-in), `list-utils-htt-='
+\(numeric), `list-utils-htt-case-fold-equal' (case-insensitive).
+See `define-hash-table-test' to define your own tests.
+
+HINT is an optional micro-optimization, predicting the size of
+the list to be hashed (LIST2 unless FLIP is set).
+
+When optional FLIP is set, the sense of the comparison is
+reversed, causing order and duplicates to follow LIST2, then
+LIST1.
+
+Performance: see notes under `list-utils-and'."
+  (append (list-utils-not list1 list2 test hint flip)
+          (list-utils-not list2 list1 test nil  flip)))
 ;;; alists
 
 ;;;###autoload
