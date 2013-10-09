@@ -727,6 +727,63 @@ LIST is modified and the new value is returned."
       (callf list-utils-make-improper-inplace list)))
   list)
 
+;;;###autoload
+(defun list-utils-and (list1 list2 &optional test hint flip)
+  "Return the elements of LIST1 which are present in LIST2.
+
+This is similar to `cl-intersection' (or `intersection') from
+the cl library, except that `list-utils-and' preserves order,
+does not uniquify the results, and performs better for large
+lists.
+
+Order will follow LIST1.  Duplicates may be present in the result
+as in LIST1.
+
+TEST is an optional comparison function in the form of a
+hash-table-test.  The default is `eql'.  Other valid values
+include `eq' (built-in), `equal' (built-in), `list-utils-htt-='
+\(numeric), `list-utils-htt-case-fold-equal' (case-insensitive).
+See `define-hash-table-test' to define your own tests.
+
+HINT is an optional micro-optimization, predicting the size of
+the list to be hashed (LIST2 unless FLIP is set).
+
+When optional FLIP is set, the sense of the comparison is
+reversed.  When FLIP is set, LIST2 will be the guide for the
+order of the result, and will determine whether duplicates may
+be returned.  Since this function preserves duplicates, setting
+FLIP can change the number of elements in the result.
+
+Performance: `list-utils-and' and friends use a general-purpose
+hashing approach.  `intersection' and friends use pure iteration.
+Iteration can be much faster in a few special cases, especially
+when the number of elements is small.  In other scenarios,
+iteration can be much slower.  Hashing has no worst-case
+performance scenario, although it uses much more memory.  For
+heavy-duty list operations, performance may be improved by
+`let'ing `gc-cons-threshold' to a high value around sections that
+make frequent use of this function."
+  (when flip
+    (psetq list1 list2 list2 list1))
+  (cond
+    ((null list1)
+     list2)
+    ((null list2)
+     list1)
+    ((equal list1 list2)
+     list1)
+    (t
+     (let ((saw (make-hash-table
+                 :test (or test 'eql)
+                 :size (or hint (safe-length (if flip list1 list2))))))
+       (mapc #'(lambda (elt)
+                 (puthash elt t saw))
+             list2)
+       (delq nil (mapcar #'(lambda (elt)
+                             (when (gethash elt saw)
+                               elt))
+                         list1))))))
+
 ;;; alists
 
 ;;;###autoload

@@ -1,6 +1,17 @@
 
 (require 'list-utils)
 
+(eval-and-compile
+  (require 'cl)
+  (unless (fboundp 'cl-intersection)
+    (defalias 'cl-intersection 'intersection)))
+
+;;; utility functions
+
+(defun list-utils-soft-string-lessp (x y)
+  (string-lessp (string-utils-stringify-anything x)
+                (string-utils-stringify-anything y)))
+
 ;;; make-tconc
 
 (ert-deftest make-tconc-01 nil
@@ -1572,6 +1583,121 @@
 (ert-deftest list-utils-insert-after-pos-10 nil
   (should-error
    (list-utils-insert-after-pos (list* 1 2 3) 3 'elt)))
+
+
+;;; list-utils-and
+
+(ert-deftest list-utils-and-01 nil
+  "Logical AND operation on two lists"
+  (let ((list-1 '(A a a 8 8 1 2 3 3 3 4.0 5 6 7 9 9 5))
+        (list-2 '(a b c d 1 2 3 4)))
+    (should (equal '(a a 1 2 3 3 3)
+                   (list-utils-and list-1 list-2)))))
+
+(ert-deftest list-utils-and-02 nil
+  "Logical AND operation with size hint, should be identical"
+  (let ((list-1 '(A a a 8 8 1 2 3 3 3 4.0 5 6 7 9 9 5))
+        (list-2 '(a b c d 1 2 3 4)))
+    (should (equal (list-utils-and list-1 list-2)
+                   (list-utils-and list-1 list-2 nil 17)))))
+
+(ert-deftest list-utils-and-03 nil
+  "Logical AND operation with FLIP param"
+  (let ((list-1 '(A a a 8 8 1 2 3 3 3 4.0 5 6 7 9 9 5))
+        (list-2 '(a b c d 1 2 3 4)))
+    (should (equal '(a 1 2 3)
+                   (list-utils-and list-1 list-2 nil nil 'flip)))))
+
+(ert-deftest list-utils-and-04 nil
+  "Logical AND operation with FLIP param should be the same as reversing order of list args"
+  (let ((list-1 '(A a a 8 8 1 2 3 3 3 4.0 5 6 7 9 9 5))
+        (list-2 '(a b c d 1 2 3 4)))
+    (should (equal (list-utils-and list-2 list-1)
+                   (list-utils-and list-1 list-2 nil nil 'flip)))))
+
+(ert-deftest list-utils-and-05 nil
+  "Logical AND operation with numeric hash-table-test"
+  (let ((list-1 '(A a a 8 8 1 2 3 3 3 4.0 5 6 7 9 9 5))
+        (list-2 '(a b c d 1 2 3 4)))
+    (should (equal '(a a 1 2 3 3 3 4.0)
+                   (list-utils-and list-1 list-2 'list-utils-htt-=)))))
+
+(ert-deftest list-utils-and-06 nil
+  "Logical AND operation with numeric hash-table-test and FLIP param"
+  (let ((list-1 '(A a a 8 8 1 2 3 3 3 4.0 5 6 7 9 9 5))
+        (list-2 '(a b c d 1 2 3 4)))
+    (should (equal '(a 1 2 3 4)
+                   (list-utils-and list-1 list-2 'list-utils-htt-= nil 'flip)))))
+
+(ert-deftest list-utils-and-07 nil
+  "Logical AND operation with case-insensitive hash-table-test"
+  (let ((list-1 '(A a a 8 8 1 2 3 3 3 4.0 5 6 7 9 9 5))
+        (list-2 '(a b c d 1 2 3 4)))
+    (should (equal '(A a a 1 2 3 3 3)
+                   (list-utils-and list-1 list-2 'list-utils-htt-case-fold-equal)))))
+
+(ert-deftest list-utils-and-08 nil
+  "Logical AND operation with case-insensitive hash-table-test and FLIP param"
+  (let ((list-1 '(A 8 8 1 2 3 3 3 4.0 5 6 7 9 9 5)) ; note different list-1
+        (list-2 '(a b c d 1 2 3 4)))
+    (should (equal '(a 1 2 3)                       ; element a is still present
+                   (list-utils-and list-1 list-2 'list-utils-htt-case-fold-equal nil 'flip)))))
+
+(ert-deftest list-utils-and-09 nil
+  "Logical AND operation should be identical to `cl-intersection' after sort/uniq"
+  (let ((list-1 '(A a a 8 8 1 2 3 3 3 4.0 5 6 7 9 9 5))
+        (list-2 '(a b c d 1 2 3 4)))
+    (should (equal (sort (list-utils-uniq (cl-intersection list-1 list-2)) 'list-utils-soft-string-lessp)
+                   (sort (list-utils-uniq (list-utils-and list-1 list-2)) 'list-utils-soft-string-lessp)))))
+
+(ert-deftest list-utils-and-10 nil
+  "Logical AND operation with two large lists"
+  (let ((list-1          (number-sequence 1 10000))
+        (list-2 (reverse (number-sequence 4 10009))))
+    (should (equal (number-sequence 4 10000)
+                   (list-utils-and list-1 list-2)))))
+
+(ert-deftest list-utils-and-11 nil
+  "Logical AND operation with large lists and size hint, should be identical"
+  (let ((list-1          (number-sequence 1 10000))
+        (list-2 (reverse (number-sequence 4 10009))))
+    (should (equal (list-utils-and list-1 list-2)
+                   (list-utils-and list-1 list-2 nil 10000)))))
+
+(ert-deftest list-utils-and-12 nil
+  "Logical AND operation with large lists and FLIP param"
+  (let ((list-1          (number-sequence 1 10000))
+        (list-2 (reverse (number-sequence 4 10009))))
+    (should (equal (reverse (number-sequence 4 10000))
+                   (list-utils-and list-1 list-2 nil nil 'flip)))))
+
+(ert-deftest list-utils-and-13 nil
+  "Logical AND operation with large lists and FLIP param should be the same as reversing order of list args"
+  (let ((list-1          (number-sequence 1 10000))
+        (list-2 (reverse (number-sequence 4 10009))))
+    (should (equal (list-utils-and list-2 list-1)
+                   (list-utils-and list-1 list-2 nil nil 'flip)))))
+
+(ert-deftest list-utils-and-14 nil
+  "Logical AND operation with large lists and numeric hash-table-test"
+  (let ((list-1                         (number-sequence 1 10000))
+        (list-2 (reverse (mapcar 'float (number-sequence 4 10009)))))
+    (should (equal (number-sequence 4 10000)
+                   (list-utils-and list-1 list-2 'list-utils-htt-=)))))
+
+(ert-deftest list-utils-and-15 nil
+  "Logical AND operation with large lists and case-insensitive hash-table-test"
+  (let ((list-1 (mapcar 'char-to-string          (number-sequence 1 10000)))
+        (list-2 (mapcar 'char-to-string (reverse (number-sequence 4 10009)))))
+    (should (equal (mapcar 'char-to-string (number-sequence 4 10000))
+                   (list-utils-and list-1 list-2 'list-utils-htt-case-fold-equal)))))
+
+(ert-deftest list-utils-and-16 nil
+  "Logical AND operation with large lists should be identical to `cl-intersection' after sort/uniq"
+  (let ((list-1          (number-sequence 1 10000))
+        (list-2 (reverse (number-sequence 4 10009))))
+    (should (equal (sort (list-utils-uniq (cl-intersection list-1 list-2)) 'list-utils-soft-string-lessp)
+                   (sort (list-utils-uniq (list-utils-and list-1 list-2)) 'list-utils-soft-string-lessp)))))
 
 
 ;;; list-utils-plist-reverse
