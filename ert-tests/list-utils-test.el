@@ -14,7 +14,7 @@
 
 ;;; utility functions
 
-(defun list-utils-soft-string-lessp (x y)
+(defun list-utils-test-soft-string-lessp (x y)
   (string-lessp (string-utils-stringify-anything x)
                 (string-utils-stringify-anything y)))
 
@@ -1653,8 +1653,8 @@
   "Logical AND operation should be identical to `cl-intersection' after sort/uniq"
   (let ((list-1 '(A a a 8 8 1 2 3 3 3 4.0 5 6 7 9 9 5))
         (list-2 '(a b c d 1 2 3 4)))
-    (should (equal (sort (list-utils-uniq (cl-intersection list-1 list-2)) 'list-utils-soft-string-lessp)
-                   (sort (list-utils-uniq (list-utils-and list-1 list-2)) 'list-utils-soft-string-lessp)))))
+    (should (equal (sort (list-utils-uniq (cl-intersection list-1 list-2)) 'list-utils-test-soft-string-lessp)
+                   (sort (list-utils-uniq (list-utils-and list-1 list-2)) 'list-utils-test-soft-string-lessp)))))
 
 (ert-deftest list-utils-and-10 nil
   "Logical AND operation with two large lists"
@@ -1702,8 +1702,8 @@
   "Logical AND operation with large lists should be identical to `cl-intersection' after sort/uniq"
   (let ((list-1          (number-sequence 1 10000))
         (list-2 (reverse (number-sequence 4 10009))))
-    (should (equal (sort (list-utils-uniq (cl-intersection list-1 list-2)) 'list-utils-soft-string-lessp)
-                   (sort (list-utils-uniq (list-utils-and list-1 list-2)) 'list-utils-soft-string-lessp)))))
+    (should (equal (sort (list-utils-uniq (cl-intersection list-1 list-2)) 'list-utils-test-soft-string-lessp)
+                   (sort (list-utils-uniq (list-utils-and list-1 list-2)) 'list-utils-test-soft-string-lessp)))))
 
 
 ;;; list-utils-not
@@ -1768,8 +1768,8 @@
   "Logical NOT operation should be identical to `cl-set-difference' after sort/uniq"
   (let ((list-1 '(A a a 8 8 1 2 3 3 3 4.0 5 6 7 9 9 5))
         (list-2 '(a b c d 1 2 3 4)))
-    (should (equal (sort (list-utils-uniq (cl-set-difference list-1 list-2)) 'list-utils-soft-string-lessp)
-                   (sort (list-utils-uniq (list-utils-not list-1 list-2)) 'list-utils-soft-string-lessp)))))
+    (should (equal (sort (list-utils-uniq (cl-set-difference list-1 list-2)) 'list-utils-test-soft-string-lessp)
+                   (sort (list-utils-uniq (list-utils-not list-1 list-2)) 'list-utils-test-soft-string-lessp)))))
 
 (ert-deftest list-utils-not-10 nil
   "Logical NOT operation with two large lists"
@@ -1817,8 +1817,8 @@
   "Logical NOT operation with large lists should be identical to `cl-set-difference' after sort/uniq"
   (let ((list-1          (number-sequence 1 10000))
         (list-2 (reverse (number-sequence 4 10009))))
-    (should (equal (sort (list-utils-uniq (cl-set-difference list-1 list-2)) 'list-utils-soft-string-lessp)
-                   (sort (list-utils-uniq (list-utils-not list-1 list-2)) 'list-utils-soft-string-lessp)))))
+    (should (equal (sort (list-utils-uniq (cl-set-difference list-1 list-2)) 'list-utils-test-soft-string-lessp)
+                   (sort (list-utils-uniq (list-utils-not list-1 list-2)) 'list-utils-test-soft-string-lessp)))))
 
 
 ;;; list-utils-xor
@@ -1883,15 +1883,15 @@
   "Logical XOR operation should be identical to `cl-set-exclusive-or' after sort/uniq"
   (let ((list-1 '(A a a 8 8 1 2 3 3 3 4.0 5 6 7 9 9 5))
         (list-2 '(a b c d 1 2 3 4)))
-    (should (equal (sort (list-utils-uniq (cl-set-exclusive-or list-1 list-2)) 'list-utils-soft-string-lessp)
-                   (sort (list-utils-uniq (list-utils-xor list-1 list-2)) 'list-utils-soft-string-lessp)))))
+    (should (equal (sort (list-utils-uniq (cl-set-exclusive-or list-1 list-2)) 'list-utils-test-soft-string-lessp)
+                   (sort (list-utils-uniq (list-utils-xor list-1 list-2)) 'list-utils-test-soft-string-lessp)))))
 
 (ert-deftest list-utils-xor-10 nil
   "Logical XOR operation should be identical to itself with FLIP param after sort/uniq"
   (let ((list-1 '(A a a 8 8 1 2 3 3 3 4.0 5 6 7 9 9 5))
         (list-2 '(a b c d 1 2 3 4)))
-    (should (equal (sort (list-utils-uniq (list-utils-xor list-2 list-1)) 'list-utils-soft-string-lessp)
-                   (sort (list-utils-uniq (list-utils-xor list-1 list-2)) 'list-utils-soft-string-lessp)))))
+    (should (equal (sort (list-utils-uniq (list-utils-xor list-2 list-1)) 'list-utils-test-soft-string-lessp)
+                   (sort (list-utils-uniq (list-utils-xor list-1 list-2)) 'list-utils-test-soft-string-lessp)))))
 
 (ert-deftest list-utils-xor-11 nil
   "Logical XOR operation with two large lists"
@@ -1944,15 +1944,15 @@
   "Logical XOR operation with large lists should be identical to `cl-set-exclusive-or' after sort/uniq"
   (let ((list-1          (number-sequence 1 10000))
         (list-2 (reverse (number-sequence 4 10009))))
-    (should (equal (sort (list-utils-uniq (cl-set-exclusive-or list-1 list-2)) 'list-utils-soft-string-lessp)
-                   (sort (list-utils-uniq (list-utils-xor list-1 list-2)) 'list-utils-soft-string-lessp)))))
+    (should (equal (sort (list-utils-uniq (cl-set-exclusive-or list-1 list-2)) 'list-utils-test-soft-string-lessp)
+                   (sort (list-utils-uniq (list-utils-xor list-1 list-2)) 'list-utils-test-soft-string-lessp)))))
 
 (ert-deftest list-utils-xor-18 nil
   "Logical XOR operation with large lists should be identical to reverse-XOR-operation after sort/uniq"
   (let ((list-1          (number-sequence 1 10000))
         (list-2 (reverse (number-sequence 4 10009))))
-    (should (equal (sort (list-utils-uniq (list-utils-xor list-2 list-1)) 'list-utils-soft-string-lessp)
-                   (sort (list-utils-uniq (list-utils-xor list-1 list-2)) 'list-utils-soft-string-lessp)))))
+    (should (equal (sort (list-utils-uniq (list-utils-xor list-2 list-1)) 'list-utils-test-soft-string-lessp)
+                   (sort (list-utils-uniq (list-utils-xor list-1 list-2)) 'list-utils-test-soft-string-lessp)))))
 
 
 ;;; list-utils-uniq
@@ -1984,8 +1984,8 @@
 (ert-deftest list-utils-uniq-05 nil
   "UNIQ operation should be identical to `remove-duplicates' after sort"
   (let ((list '(A a a 8 8 1 2 4 3 3 3 4.0 5 6 7 9 9 5)))
-    (should (equal (sort (remove-duplicates list) 'list-utils-soft-string-lessp)
-                   (sort (list-utils-uniq list) 'list-utils-soft-string-lessp)))))
+    (should (equal (sort (remove-duplicates list) 'list-utils-test-soft-string-lessp)
+                   (sort (list-utils-uniq list) 'list-utils-test-soft-string-lessp)))))
 
 (ert-deftest list-utils-uniq-06 nil
   "UNIQ operation with a large list"
@@ -2021,8 +2021,8 @@
 (ert-deftest list-utils-uniq-10 nil
   "UNIQ operation with large list should be identical to `remove-duplicates' after sort"
   (let ((list (append (number-sequence 1 10000) (reverse (number-sequence 4 10009)))))
-    (should (equal (sort (remove-duplicates list) 'list-utils-soft-string-lessp)
-                   (sort (list-utils-uniq list) 'list-utils-soft-string-lessp)))))
+    (should (equal (sort (remove-duplicates list) 'list-utils-test-soft-string-lessp)
+                   (sort (list-utils-uniq list) 'list-utils-test-soft-string-lessp)))))
 
 
 ;;; list-utils-dupes
