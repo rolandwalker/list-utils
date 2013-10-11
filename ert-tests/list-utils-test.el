@@ -1387,6 +1387,14 @@
       (subseq (list-utils-cyclic-subseq cyclic-2) 0 (list-utils-safe-length (list-utils-cyclic-subseq cyclic-2)))))))
 
 
+;;; list-utils-alist-or-flat-length
+
+(ert-deftest list-utils-alist-or-flat-length-01 nil
+  (let ((mixed '(1 2 3 nil 7 8 9 (4 . 0) 5 6 7 (8 9))))
+    (should (= 11
+               (list-utils-alist-or-flat-length mixed)))))
+
+
 ;;; list-utils-alist-flatten
 
 (ert-deftest list-utils-alist-flatten-01 nil

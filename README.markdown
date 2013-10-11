@@ -69,6 +69,7 @@ The following functions are provided:
 	list-utils-depth
 	list-utils-flat-length
 	list-utils-flatten
+	list-utils-alist-or-flat-length
 	list-utils-alist-flatten
 	list-utils-insert-before
 	list-utils-insert-after

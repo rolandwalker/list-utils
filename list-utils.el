@@ -74,6 +74,7 @@
 ;;     `list-utils-depth'
 ;;     `list-utils-flat-length'
 ;;     `list-utils-flatten'
+;;     `list-utils-alist-or-flat-length'
 ;;     `list-utils-alist-flatten'
 ;;     `list-utils-insert-before'
 ;;     `list-utils-insert-after'
@@ -1022,6 +1023,23 @@ Performance: see notes under `list-utils-and'."
                                   list))))))
 
 ;;; alists
+
+;;;###autoload
+(defun list-utils-alist-or-flat-length (list)
+  "Count simple or cons-cell elements from the beginning of LIST.
+
+Stop counting when a proper list of non-zero length is reached.
+
+If the car of LIST is a list, return 0."
+  (let ((counter 0))
+    (ignore-errors
+        (catch 'saw-depth
+          (dolist (elt list)
+            (when (and (consp elt)
+                       (not (list-utils-cons-cell-p elt)))
+              (throw 'saw-depth t))
+            (incf counter))))
+  counter))
 
 ;;;###autoload
 (defun list-utils-alist-flatten (list)
