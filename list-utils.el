@@ -740,8 +740,8 @@ Order will follow LIST1.  Duplicates may be present in the result
 as in LIST1.
 
 TEST is an optional comparison function in the form of a
-hash-table-test.  The default is `eql'.  Other valid values
-include `eq' (built-in), `equal' (built-in), `list-utils-htt-='
+hash-table-test.  The default is `equal'.  Other valid values
+include `eq' (built-in), `eql' (built-in), `list-utils-htt-='
 \(numeric), `list-utils-htt-case-fold-equal' (case-insensitive).
 See `define-hash-table-test' to define your own tests.
 
@@ -774,7 +774,7 @@ make frequent use of this function."
      list1)
     (t
      (let ((saw (make-hash-table
-                 :test (or test 'eql)
+                 :test (or test 'equal)
                  :size (or hint (safe-length (if flip list1 list2))))))
        (mapc #'(lambda (elt)
                  (puthash elt t saw))
@@ -794,8 +794,8 @@ performs better for large lists.  Order will follow LIST1.
 Duplicates may be present as in LIST1.
 
 TEST is an optional comparison function in the form of a
-hash-table-test.  The default is `eql'.  Other valid values
-include `eq' (built-in), `equal' (built-in), `list-utils-htt-='
+hash-table-test.  The default is `equal'.  Other valid values
+include `eq' (built-in), `eql' (built-in), `list-utils-htt-='
 \(numeric), `list-utils-htt-case-fold-equal' (case-insensitive).
 See `define-hash-table-test' to define your own tests.
 
@@ -830,7 +830,7 @@ Performance: see notes under `list-utils-and'."
     ;;                    list1)))
     (t
      (let ((saw (make-hash-table
-                 :test (or test 'eql)
+                 :test (or test 'equal)
                  :size (or hint (safe-length list2)))))
        (mapc #'(lambda (elt)
                  (puthash elt t saw))
@@ -850,8 +850,8 @@ and performs better for large lists.  Order will follow LIST1,
 then LIST2.  Duplicates may be present as in LIST1 or LIST2.
 
 TEST is an optional comparison function in the form of a
-hash-table-test.  The default is `eql'.  Other valid values
-include `eq' (built-in), `equal' (built-in), `list-utils-htt-='
+hash-table-test.  The default is `equal'.  Other valid values
+include `eq' (built-in), `eql' (built-in), `list-utils-htt-='
 \(numeric), `list-utils-htt-case-fold-equal' (case-insensitive).
 See `define-hash-table-test' to define your own tests.
 
@@ -875,8 +875,8 @@ from the cl library, except that `list-utils-uniq' preserves order,
 and performs better for large lists.  Order will follow LIST.
 
 TEST is an optional comparison function in the form of a
-hash-table-test.  The default is `eql'.  Other valid values
-include `eq' (built-in), `equal' (built-in), `list-utils-htt-='
+hash-table-test.  The default is `equal'.  Other valid values
+include `eq' (built-in), `eql' (built-in), `list-utils-htt-='
 \(numeric), `list-utils-htt-case-fold-equal' (case-insensitive).
 See `define-hash-table-test' to define your own tests.
 
@@ -885,7 +885,7 @@ LIST.
 
 Performance: see notes under `list-utils-and'."
   (let ((saw (make-hash-table
-              :test (or test 'eql)
+              :test (or test 'equal)
               :size (or hint (safe-length list)))))
     (delq nil (mapcar #'(lambda (elt)
                           (unless (gethash elt saw)
@@ -902,8 +902,8 @@ Duplicated elements may still exist in the result: this function
 removes singlets.
 
 TEST is an optional comparison function in the form of a
-hash-table-test.  The default is `eql'.  Other valid values
-include `eq' (built-in), `equal' (built-in), `list-utils-htt-='
+hash-table-test.  The default is `equal'.  Other valid values
+include `eq' (built-in), `eql' (built-in), `list-utils-htt-='
 \(numeric), `list-utils-htt-case-fold-equal' (case-insensitive).
 See `define-hash-table-test' to define your own tests.
 
@@ -912,7 +912,7 @@ LIST.
 
 Performance: see notes under `list-utils-and'."
   (let ((saw (make-hash-table
-              :test (or test 'eql)
+              :test (or test 'equal)
               :size (or hint (safe-length list)))))
     (mapc #'(lambda (elt)
               (puthash elt (if (gethash elt saw) 2 1) saw))
@@ -929,8 +929,8 @@ Performance: see notes under `list-utils-and'."
 Duplicated elements may not exist in the result.
 
 TEST is an optional comparison function in the form of a
-hash-table-test.  The default is `eql'.  Other valid values
-include `eq' (built-in), `equal' (built-in), `list-utils-htt-='
+hash-table-test.  The default is `equal'.  Other valid values
+include `eq' (built-in), `eql' (built-in), `list-utils-htt-='
 \(numeric), `list-utils-htt-case-fold-equal' (case-insensitive).
 See `define-hash-table-test' to define your own tests.
 
@@ -939,7 +939,7 @@ LIST.
 
 Performance: see notes under `list-utils-and'."
   (let ((saw (make-hash-table
-              :test (or test 'eql)
+              :test (or test 'equal)
               :size (or hint (safe-length list)))))
     (mapc #'(lambda (elt)
               (puthash elt (if (gethash elt saw) 2 1) saw))
