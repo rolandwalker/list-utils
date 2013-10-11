@@ -681,8 +681,9 @@ flattens circular list structures."
              (list-utils-flatten (cdr list))))
 
     ((listp list)
-     (cons (car list)
-           (list-utils-flatten (cdr list))))
+     (let ((extent (list-utils-flat-length list)))
+       (append (subseq list 0 extent)
+               (list-utils-flatten (nthcdr extent list)))))
 
     (t
      (list list))))
@@ -1071,8 +1072,9 @@ pair."
              (list-utils-alist-flatten (cdr list))))
 
     ((listp list)
-     (cons (car list)
-           (list-utils-alist-flatten (cdr list))))
+     (let ((extent (list-utils-alist-or-flat-length list)))
+       (append (subseq list 0 extent)
+               (list-utils-alist-flatten (nthcdr extent list)))))
 
     (t
      (list list))))
