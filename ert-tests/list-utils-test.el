@@ -2021,8 +2021,8 @@
 (ert-deftest list-utils-uniq-10 nil
   "UNIQ operation with large list should be identical to `remove-duplicates' after sort"
   (let ((list (append (number-sequence 1 10000) (reverse (number-sequence 4 10009)))))
-    (should (equal (sort (list-utils-uniq (remove-duplicates list)) 'list-utils-soft-string-lessp)
-                   (sort (list-utils-uniq (list-utils-uniq list)) 'list-utils-soft-string-lessp)))))
+    (should (equal (sort (remove-duplicates list) 'list-utils-soft-string-lessp)
+                   (sort (list-utils-uniq list) 'list-utils-soft-string-lessp)))))
 
 
 ;;; list-utils-dupes
