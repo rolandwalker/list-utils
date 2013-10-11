@@ -2054,11 +2054,11 @@
 (ert-deftest list-utils-dupes-05 nil
   "DUPES operation should be identical to result composed of other list operations"
   (let ((list '(A a a 8 8 1 2 4 3 3 3 4.0 5 6 7 9 9 5)))
-    (should (equal (list-utils-dupes list)
-                   (list-utils-and list
+    (should (equal (list-utils-and list
                                    (list-utils-singlets
                                     (append (list-utils-singlets list)
-                                            (remove-duplicates list))))))))
+                                            (remove-duplicates list))))
+                   (list-utils-dupes list)))))
 
 (ert-deftest list-utils-dupes-06 nil
   "DUPES operation with a large list"
@@ -2091,11 +2091,11 @@
 (ert-deftest list-utils-dupes-10 nil
   "DUPES operation with large list should be identical to result composed of other list operations"
   (let ((list (append (number-sequence 1 10000) (reverse (number-sequence 4 10009)))))
-    (should (equal (list-utils-dupes list)
-                   (list-utils-and list
+    (should (equal (list-utils-and list
                                    (list-utils-singlets
                                     (append (list-utils-singlets list)
-                                            (remove-duplicates list))))))))
+                                            (remove-duplicates list))))
+                   (list-utils-dupes list)))))
 
 
 ;;; list-utils-singlets
@@ -2127,8 +2127,8 @@
 (ert-deftest list-utils-singlets-05 nil
   "SINGLETS operation should be identical to result composed of other list operations"
   (let ((list '(A a a 8 8 1 2 4 3 3 3 4.0 5 6 7 9 9 5)))
-    (should (equal (list-utils-singlets list)
-                   (list-utils-not list (list-utils-dupes list))))))
+    (should (equal (list-utils-not list (list-utils-dupes list))
+                   (list-utils-singlets list)))))
 
 (ert-deftest list-utils-singlets-06 nil
   "SINGLETS operation with a large list"
@@ -2162,8 +2162,9 @@
 (ert-deftest list-utils-singlets-10 nil
   "SINGLETS operation with large list should be identical to result composed of other list operations"
   (let ((list (append (number-sequence 1 10000) (reverse (number-sequence 4 10009)))))
-    (should (equal (list-utils-singlets list)
-                   (list-utils-not list (list-utils-dupes list))))))
+    (should (equal (list-utils-not list (list-utils-dupes list))
+                   (list-utils-singlets list)))))
+
 
 
 ;;; list-utils-plist-reverse
