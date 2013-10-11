@@ -67,6 +67,7 @@ The following functions are provided:
 	list-utils-safe-length
 	list-utils-safe-equal
 	list-utils-depth
+	list-utils-flat-length
 	list-utils-flatten
 	list-utils-alist-flatten
 	list-utils-insert-before

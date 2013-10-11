@@ -72,6 +72,7 @@
 ;;     `list-utils-safe-length'
 ;;     `list-utils-safe-equal'
 ;;     `list-utils-depth'
+;;     `list-utils-flat-length'
 ;;     `list-utils-flatten'
 ;;     `list-utils-alist-flatten'
 ;;     `list-utils-insert-before'
@@ -530,6 +531,23 @@ elements, like `safe-length'."
     (let ((cycle-length (list-utils-cyclic-length list)))
       (+ cycle-length
          (safe-length (list-utils-linear-subseq list cycle-length))))))
+
+;;;###autoload
+(defun list-utils-flat-length (list)
+  "Count simple elements from the beginning of LIST.
+
+Stop counting when a cons is reached.  `nil' is not a cons,
+and is considered to be a \"simple\" element.
+
+If the car of LIST is a cons, return 0."
+  (let ((counter 0))
+    (ignore-errors
+        (catch 'saw-depth
+          (dolist (elt list)
+            (when (consp elt)
+              (throw 'saw-depth t))
+            (incf counter))))
+  counter))
 
 ;;;###autoload
 (defun list-utils-make-linear-copy (list &optional tree)

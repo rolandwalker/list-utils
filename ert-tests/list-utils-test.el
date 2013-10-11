@@ -895,6 +895,14 @@
                (list-utils-safe-length cyclic)))))
 
 
+;;; list-utils-flat-length
+
+(ert-deftest list-utils-flat-length-01 nil
+  (let ((mixed '(1 2 3 nil 7 8 9 (4 . 0) 5 6 7 (8 9))))
+    (should (= 7
+               (list-utils-flat-length mixed)))))
+
+
 ;;; list-utils-make-linear-copy
 
 (ert-deftest list-utils-make-linear-copy-01 nil
