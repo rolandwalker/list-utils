@@ -2166,6 +2166,92 @@
                    (list-utils-singlets list)))))
 
 
+;;; list-utils-partition-dupes
+
+(ert-deftest list-utils-partition-dupes-01 nil
+  "PARTITION DUPES operation on a list"
+  (let ((list '(A a a 8 8 1 2 4 3 3 3 4.0 5 6 7 9 9 5)))
+    (should (equal '((dupes . (a a 8 8 3 3 3 5 9 9 5))
+                     (singlets . (A 1 2 4 4.0 6 7)))
+                   (list-utils-partition-dupes list)))))
+
+(ert-deftest list-utils-partition-dupes-02 nil
+  "PARTITION DUPES operation with size hint, should be identical"
+  (let ((list '(A a a 8 8 1 2 4 3 3 3 4.0 5 6 7 9 9 5)))
+    (should (equal (list-utils-partition-dupes list)
+                   (list-utils-partition-dupes list nil 17)))))
+
+(ert-deftest list-utils-partition-dupes-03 nil
+  "PARTITION DUPES operation with numeric hash-table-test"
+  (let ((list '(A a a 8 8 1 2 4 3 3 3 4.0 5 6 7 9 9 5)))
+    (should (equal '((dupes . (a a 8 8 4 3 3 3 4.0 5 9 9 5)) ; elements 4 4.0 now in dupes
+                     (singlets . (A 1 2 6 7)))
+                   (list-utils-partition-dupes list 'list-utils-htt-=)))))
+
+(ert-deftest list-utils-partition-dupes-04 nil
+  "PARTITION DUPES operation with case-insensitive hash-table-test"
+  (let ((list '(A a a 8 8 1 2 4 3 3 3 4.0 5 6 7 9 9 5)))
+    (should (equal '((dupes . (A a a 8 8 3 3 3 5 9 9 5))     ; elements A a now in dupes
+                     (singlets . (1 2 4 4.0 6 7)))
+                   (list-utils-partition-dupes list 'list-utils-htt-case-fold-equal)))))
+
+(ert-deftest list-utils-partition-dupes-05 nil
+  "PARTITION DUPES operation should be identical to result composed of other list operations"
+  (let ((list '(A a a 8 8 1 2 4 3 3 3 4.0 5 6 7 9 9 5)))
+    (should (equal (list (cons 'dupes (list-utils-dupes list))
+                         (cons 'singlets (list-utils-singlets list)))
+                   (list-utils-partition-dupes list)))))
+
+(ert-deftest list-utils-partition-dupes-06 nil
+  "PARTITION DUPES operation should not remove any values"
+  (let ((list '(A a a 8 8 1 2 4 3 3 3 4.0 5 6 7 9 9 5)))
+    (should (equal (sort (copy-sequence list) 'list-utils-test-soft-string-lessp)
+                   (sort (apply 'append (mapcar 'cdr (list-utils-partition-dupes list)))
+                         'list-utils-test-soft-string-lessp)))))
+
+(ert-deftest list-utils-partition-dupes-07 nil
+  "PARTITION DUPES operation with a large list"
+  (let ((list (append (number-sequence 1 10000) (reverse (number-sequence 4 10009)))))
+    (should (equal (list (cons 'dupes    (append (number-sequence 4 10000) (reverse (number-sequence 4 10000))))
+                         (cons 'singlets (append (number-sequence 1 3) (reverse (number-sequence 10001 10009)))))
+                   (list-utils-partition-dupes list)))))
+
+(ert-deftest list-utils-partition-dupes-08 nil
+  "PARTITION DUPES operation with large list and size hint, should be identical"
+  (let ((list (append (number-sequence 1 10000) (reverse (number-sequence 4 10009)))))
+    (should (equal (list-utils-partition-dupes list)
+                   (list-utils-partition-dupes list nil 10000)))))
+
+(ert-deftest list-utils-partition-dupes-09 nil
+  "PARTITION DUPES operation with large list and numeric hash-table-test"
+  (let ((list (append (number-sequence 1 10000) (mapcar 'float (reverse (number-sequence 4 10009))))))
+    (should (equal (list (cons 'dupes    (append (number-sequence 4 10000) (mapcar 'float (reverse (number-sequence 4 10000)))))
+                         (cons 'singlets (append (number-sequence 1 3) (mapcar 'float (reverse (number-sequence 10001 10009))))))
+                   (list-utils-partition-dupes list 'list-utils-htt-=)))))
+
+;; @@@ Todo: figure out what is really the expected result, casefolding
+;;     across so many characters.  Without applying casefolding to the
+;;     test target set, this should not be expected to work.
+(ert-deftest list-utils-partition-dupes-10 nil
+  "PARTITION DUPES operation with large list and case-insensitive hash-table-test"
+  :expected-result :failed
+  (let ((list (mapcar 'char-to-string (append (number-sequence 1 10000) (reverse (number-sequence 4 10009))))))
+    (should (equal (list (cons 'dupes    (mapcar 'char-to-string (append (number-sequence 4 10000) (reverse (number-sequence 4 10000)))))
+                         (cons 'singlets (mapcar 'char-to-string (append (number-sequence 1 3) (reverse (number-sequence 10001 10009))))))
+                   (list-utils-partition-dupes list 'list-utils-htt-case-fold-equal)))))
+
+(ert-deftest list-utils-partition-dupes-11 nil
+  "PARTITION DUPES operation with large list should be identical to result composed of other list operations"
+  (let ((list (append (number-sequence 1 10000) (reverse (number-sequence 4 10009)))))
+    (should (equal (list (cons 'dupes (list-utils-dupes list))
+                         (cons 'singlets (list-utils-singlets list)))
+                   (list-utils-partition-dupes list)))))
+
+(ert-deftest list-utils-partition-dupes-12 nil
+  "PARTITION DUPES operation with large list should not remove any values"
+  (let ((list (append (number-sequence 1 10000) (reverse (number-sequence 4 10009)))))
+    (should (equal (sort (copy-sequence list) '<)
+                   (sort (apply 'append (mapcar 'cdr (list-utils-partition-dupes list))) '<)))))
 
 ;;; list-utils-plist-reverse
 

@@ -949,6 +949,43 @@ Performance: see notes under `list-utils-and'."
                             elt))
                       list))))
 
+;;;###autoload
+(defun list-utils-partition-dupes (list &optional test hint)
+  "Partition LIST into duplicates and singlets, preserving order.
+
+The return value is an alist with two keys: 'dupes and 'singlets.
+The two values of the alist are lists which, if combined, comprise
+a complete copy of the elements of LIST.
+
+Duplicated elements may still exist in the 'dupes partition.
+
+TEST is an optional comparison function in the form of a
+hash-table-test.  The default is `equal'.  Other valid values
+include `eq' (built-in), `eql' (built-in), `list-utils-htt-='
+\(numeric), `list-utils-htt-case-fold-equal' (case-insensitive).
+See `define-hash-table-test' to define your own tests.
+
+HINT is an optional micro-optimization, predicting the size of
+LIST.
+
+Performance: see notes under `list-utils-and'."
+  (let ((saw (make-hash-table
+              :test (or test 'equal)
+              :size (or hint (safe-length list)))))
+    (mapc #'(lambda (elt)
+              (puthash elt (if (gethash elt saw) 2 1) saw))
+          list)
+    (list (cons 'dupes
+                (delq nil (mapcar #'(lambda (elt)
+                                      (when (> (gethash elt saw) 1)
+                                        elt))
+                                  list)))
+          (cons 'singlets
+                (delq nil (mapcar #'(lambda (elt)
+                                      (when (= (gethash elt saw) 1)
+                                        elt))
+                                  list))))))
+
 ;;; alists
 
 ;;;###autoload
