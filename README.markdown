@@ -73,6 +73,13 @@ The following functions are provided:
 	list-utils-insert-after
 	list-utils-insert-before-pos
 	list-utils-insert-after-pos
+	list-utils-and
+	list-utils-not
+	list-utils-xor
+	list-utils-uniq
+	list-utils-dupes
+	list-utils-singlets
+	list-utils-partition-dupes
 	list-utils-plist-reverse
 	list-utils-plist-del
 

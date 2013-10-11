@@ -12,7 +12,7 @@
   (unless (fboundp 'cl-intersection)
     (defalias 'cl-intersection 'intersection)))
 
-;;; utility functions
+;;; utility functions for testing
 
 (defun list-utils-test-soft-string-lessp (x y)
   (string-lessp (string-utils-stringify-anything x)

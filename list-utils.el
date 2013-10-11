@@ -78,6 +78,13 @@
 ;;     `list-utils-insert-after'
 ;;     `list-utils-insert-before-pos'
 ;;     `list-utils-insert-after-pos'
+;;     `list-utils-and'
+;;     `list-utils-not'
+;;     `list-utils-xor'
+;;     `list-utils-uniq'
+;;     `list-utils-dupes'
+;;     `list-utils-singlets'
+;;     `list-utils-partition-dupes'
 ;;     `list-utils-plist-reverse'
 ;;     `list-utils-plist-del'
 ;;
@@ -105,9 +112,19 @@
 ;;
 ;; TODO
 ;;
-;;     should list-utils-make-improper accept nil as a special case?
 ;;     @@@ spin out hash-table tests into separate library
 ;;
+;;     test cyclic inputs to all
+;;     test improper inputs to all
+;;     test single-element lists as inputs to all
+;;     test cyclic single-element lists as inputs to all
+;;
+;;     should list-utils-make-improper-inplace accept nil as a special case?
+;;
+;;     could do -copy/-inplace variants for more functions, consider doing
+;;     so for flatten
+;;
+;;     list* returns a non-list on single elt, our function throws an error
 ;;
 ;;; License
 ;;
