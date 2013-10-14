@@ -15,8 +15,8 @@
 ;;; utility functions for testing
 
 (defun list-utils-test-soft-string-lessp (x y)
-  (string-lessp (string-utils-stringify-anything x)
-                (string-utils-stringify-anything y)))
+  (string-lessp (if x (format "%s" x) "")
+                (if y (format "%s" y) "")))
 
 ;;; make-tconc
 

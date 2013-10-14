@@ -171,13 +171,11 @@
 ;; for defstruct, assert, setf, callf, loop
 (require 'cl)
 
-(autoload 'string-utils-stringify-anything  "string-utils" "Coerce any object OBJ into a string.")
 (autoload 'string-utils-compress-whitespace "string-utils" "Return STR-VAL with all contiguous whitespace compressed to SEPARATOR.")
 
 ;;; declarations
 
 (declare-function list-utils-cyclic-length "list-utils.el")
-(declare-function string-utils-stringify-anything "string-utils.el")
 (declare-function string-utils-compress-whitespace "string-utils.el")
 
 ;;;###autoload
@@ -216,32 +214,32 @@ A hash-table-test is defined with the same name."
   "A string comparison function which ignores case.
 
 Non-string arguments are permitted, and will be compared after
-stringification by `string-utils-stringify-anything'.
+stringification by `format'.
 
 A hash-table-test is defined with the same name."
-  (compare-strings (string-utils-stringify-anything x) nil nil
-                   (string-utils-stringify-anything y) nil nil
+  (compare-strings (if x (format "%s" x) "") nil nil
+                   (if y (format "%s" y) "") nil nil
                    'ignore-case))
 
 (define-hash-table-test 'list-utils-htt-case-fold-equal
                         'list-utils-htt-case-fold-equal
                         #'(lambda (x)
-                            (sxhash (upcase (string-utils-stringify-anything x)))))
+                            (sxhash (upcase (if x (format "%s" x) "")))))
 
 (defun list-utils-htt-ignore-whitespace-equal (x y)
   "A string comparison function which ignores whitespace.
 
 Non-string arguments are permitted, and will be compared after
-stringification by `string-utils-stringify-anything'.
+stringification by `format'.
 
 A hash-table-test is defined with the same name."
-  (string-equal (string-utils-compress-whitespace (string-utils-stringify-anything x) nil "")
-                (string-utils-compress-whitespace (string-utils-stringify-anything y) nil "")))
+  (string-equal (string-utils-compress-whitespace (if x (format "%s" x) "") nil "")
+                (string-utils-compress-whitespace (if y (format "%s" y) "") nil "")))
 
 (define-hash-table-test 'list-utils-htt-ignore-whitespace-equal
                         'list-utils-htt-ignore-whitespace-equal
                         #'(lambda (x)
-                            (sxhash (string-utils-compress-whitespace (string-utils-stringify-anything x) nil ""))))
+                            (sxhash (string-utils-compress-whitespace (if x (format "%s" x) "") nil ""))))
 
 ;;; tconc - this section of code is in the public domain
 
