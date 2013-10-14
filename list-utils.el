@@ -537,7 +537,7 @@ elements, like `safe-length'."
 (defun list-utils-flat-length (list)
   "Count simple elements from the beginning of LIST.
 
-Stop counting when a cons is reached.  `nil' is not a cons,
+Stop counting when a cons is reached.  nil is not a cons,
 and is considered to be a \"simple\" element.
 
 If the car of LIST is a cons, return 0."
@@ -770,8 +770,8 @@ LIST is modified and the new value is returned."
 
 This is similar to `cl-intersection' (or `intersection') from
 the cl library, except that `list-utils-and' preserves order,
-does not uniquify the results, and performs better for large
-lists.
+does not uniquify the results, and exhibits more predictable
+performance for large lists.
 
 Order will follow LIST1.  Duplicates may be present in the result
 as in LIST1.
@@ -827,8 +827,8 @@ make frequent use of this function."
 
 This is similar to `cl-set-difference' (or `set-difference') from
 the cl library, except that `list-utils-not' preserves order and
-performs better for large lists.  Order will follow LIST1.
-Duplicates may be present as in LIST1.
+exhibits more predictable performance for large lists.  Order will
+follow LIST1.  Duplicates may be present as in LIST1.
 
 TEST is an optional comparison function in the form of a
 hash-table-test.  The default is `equal'.  Other valid values
@@ -883,8 +883,9 @@ Performance: see notes under `list-utils-and'."
 
 This is similar to `cl-set-exclusive-or' (or `set-exclusive-or')
 from the cl library, except that `list-utils-xor' preserves order,
-and performs better for large lists.  Order will follow LIST1,
-then LIST2.  Duplicates may be present as in LIST1 or LIST2.
+and exhibits more predictable performance for large lists.  Order
+will follow LIST1, then LIST2.  Duplicates may be present as in
+LIST1 or LIST2.
 
 TEST is an optional comparison function in the form of a
 hash-table-test.  The default is `equal'.  Other valid values
@@ -909,7 +910,8 @@ Performance: see notes under `list-utils-and'."
 
 This is similar to `cl-remove-duplicates' (or `remove-duplicates')
 from the cl library, except that `list-utils-uniq' preserves order,
-and performs better for large lists.  Order will follow LIST.
+and exhibits more predictable performance for large lists.  Order
+will follow LIST.
 
 TEST is an optional comparison function in the form of a
 hash-table-test.  The default is `equal'.  Other valid values
