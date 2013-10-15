@@ -195,10 +195,12 @@
 
 Includes Unicode whitespace characters.")
   ;; simplified version of function from string-utils
-  (defun string-utils-compress-whitespace (str-val)
-    "Return STR-VAL with all contiguous whitespace compressed to a single space."
-  (let* ((separator " ")
-         (whitespace-regexp (concat "[" string-utils-whitespace "]")))
+  (defun string-utils-compress-whitespace (str-val &optional whitespace-type separator)
+    "Return STR-VAL with all contiguous whitespace compressed to a single space.
+WHITESPACE-TYPE is ignored.
+SEPARATOR is the string with which to replace any whitespace."
+    (callf or separator " ")
+    (let ((whitespace-regexp (concat "[" string-utils-whitespace "]")))
     (save-match-data
       (replace-regexp-in-string (concat whitespace-regexp "+") separator
          str-val)))))
