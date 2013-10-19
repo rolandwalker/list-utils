@@ -130,7 +130,7 @@ before_script:
 ###
 
 script:
-  $EMACS --version && make test EMACS=$EMACS
+  "$EMACS" --version && make test EMACS="$EMACS"
 
 ###
 ### settings
