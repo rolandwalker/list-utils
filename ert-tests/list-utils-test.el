@@ -1709,9 +1709,9 @@
 
 (ert-deftest list-utils-and-15 nil
   "Logical AND operation with large lists and case-insensitive hash-table-test"
-  (let ((list-1 (mapcar 'char-to-string          (number-sequence 1 10000)))
-        (list-2 (mapcar 'char-to-string (reverse (number-sequence 4 10009)))))
-    (should (equal (mapcar 'char-to-string (number-sequence 4 10000))
+  (let ((list-1 (mapcar #'(lambda (x) (char-to-string (decode-char 'ucs x)))          (number-sequence 1 10000)))
+        (list-2 (mapcar #'(lambda (x) (char-to-string (decode-char 'ucs x))) (reverse (number-sequence 4 10009)))))
+    (should (equal (mapcar #'(lambda (x) (char-to-string (decode-char 'ucs x))) (number-sequence 4 10000))
                    (list-utils-and list-1 list-2 'list-utils-htt-case-fold-equal)))))
 
 (ert-deftest list-utils-and-16 nil
@@ -1824,9 +1824,9 @@
 
 (ert-deftest list-utils-not-15 nil
   "Logical NOT operation with large lists and case-insensitive hash-table-test"
-  (let ((list-1 (mapcar 'char-to-string          (number-sequence 1 10000)))
-        (list-2 (mapcar 'char-to-string (reverse (number-sequence 4 10009)))))
-    (should (equal (mapcar 'char-to-string (number-sequence 1 3))
+  (let ((list-1 (mapcar #'(lambda (x) (char-to-string (decode-char 'ucs x)))          (number-sequence 1 10000)))
+        (list-2 (mapcar #'(lambda (x) (char-to-string (decode-char 'ucs x))) (reverse (number-sequence 4 10009)))))
+    (should (equal (mapcar #'(lambda (x) (char-to-string (decode-char 'ucs x))) (number-sequence 1 3))
                    (list-utils-not list-1 list-2 'list-utils-htt-case-fold-equal)))))
 
 (ert-deftest list-utils-not-16 nil
@@ -1951,9 +1951,9 @@
 (ert-deftest list-utils-xor-16 nil
   "Logical XOR operation with large lists and case-insensitive hash-table-test"
   :expected-result :failed
-  (let ((list-1 (mapcar 'char-to-string          (number-sequence 1 10000)))
-        (list-2 (mapcar 'char-to-string (reverse (number-sequence 4 10009)))))
-    (should (equal (mapcar 'char-to-string (append (number-sequence 1 3) (reverse (number-sequence 10001 10009))))
+  (let ((list-1 (mapcar #'(lambda (x) (char-to-string (decode-char 'ucs x)))          (number-sequence 1 10000)))
+        (list-2 (mapcar #'(lambda (x) (char-to-string (decode-char 'ucs x))) (reverse (number-sequence 4 10009)))))
+    (should (equal (mapcar #'(lambda (x) (char-to-string (decode-char 'ucs x))) (append (number-sequence 1 3) (reverse (number-sequence 10001 10009))))
                    (list-utils-xor list-1 list-2 'list-utils-htt-case-fold-equal)))))
 
 (ert-deftest list-utils-xor-17 nil
@@ -2030,8 +2030,8 @@
 (ert-deftest list-utils-uniq-09 nil
   "UNIQ operation with large list and case-insensitive hash-table-test"
   :expected-result :failed
-  (let ((list (mapcar 'char-to-string (append (number-sequence 1 10000) (reverse (number-sequence 4 10009))))))
-    (should (equal (mapcar 'char-to-string (append (number-sequence 1 10000) (reverse (number-sequence 10001 10009))))
+  (let ((list (mapcar #'(lambda (x) (char-to-string (decode-char 'ucs x))) (append (number-sequence 1 10000) (reverse (number-sequence 4 10009))))))
+    (should (equal (mapcar #'(lambda (x) (char-to-string (decode-char 'ucs x))) (append (number-sequence 1 10000) (reverse (number-sequence 10001 10009))))
                    (list-utils-uniq list 'list-utils-htt-case-fold-equal)))))
 
 (ert-deftest list-utils-uniq-10 nil
@@ -2100,8 +2100,8 @@
 (ert-deftest list-utils-dupes-09 nil
   "DUPES operation with large list and case-insensitive hash-table-test"
   :expected-result :failed
-  (let ((list (mapcar 'char-to-string (append (number-sequence 1 10000) (reverse (number-sequence 4 10009))))))
-    (should (equal (mapcar 'char-to-string (append (number-sequence 4 10000) (reverse (number-sequence 4 10000))))
+  (let ((list (mapcar #'(lambda (x) (char-to-string (decode-char 'ucs x))) (append (number-sequence 1 10000) (reverse (number-sequence 4 10009))))))
+    (should (equal (mapcar #'(lambda (x) (char-to-string (decode-char 'ucs x))) (append (number-sequence 4 10000) (reverse (number-sequence 4 10000))))
                    (list-utils-dupes list 'list-utils-htt-case-fold-equal)))))
 
 (ert-deftest list-utils-dupes-10 nil
@@ -2171,8 +2171,8 @@
 (ert-deftest list-utils-singlets-09 nil
   "SINGLETS operation with large list and case-insensitive hash-table-test"
   :expected-result :failed
-  (let ((list (mapcar 'char-to-string (append (number-sequence 1 10000) (reverse (number-sequence 4 10009))))))
-    (should (equal (mapcar 'char-to-string (append (number-sequence 1 3) (reverse (number-sequence 10001 10009))))
+  (let ((list (mapcar #'(lambda (x) (char-to-string (decode-char 'ucs x))) (append (number-sequence 1 10000) (reverse (number-sequence 4 10009))))))
+    (should (equal (mapcar #'(lambda (x) (char-to-string (decode-char 'ucs x))) (append (number-sequence 1 3) (reverse (number-sequence 10001 10009))))
                    (list-utils-singlets list 'list-utils-htt-case-fold-equal)))))
 
 (ert-deftest list-utils-singlets-10 nil
@@ -2251,9 +2251,9 @@
 (ert-deftest list-utils-partition-dupes-10 nil
   "PARTITION DUPES operation with large list and case-insensitive hash-table-test"
   :expected-result :failed
-  (let ((list (mapcar 'char-to-string (append (number-sequence 1 10000) (reverse (number-sequence 4 10009))))))
-    (should (equal (list (cons 'dupes    (mapcar 'char-to-string (append (number-sequence 4 10000) (reverse (number-sequence 4 10000)))))
-                         (cons 'singlets (mapcar 'char-to-string (append (number-sequence 1 3) (reverse (number-sequence 10001 10009))))))
+  (let ((list (mapcar #'(lambda (x) (char-to-string (decode-char 'ucs x))) (append (number-sequence 1 10000) (reverse (number-sequence 4 10009))))))
+    (should (equal (list (cons 'dupes    (mapcar #'(lambda (x) (char-to-string (decode-char 'ucs x))) (append (number-sequence 4 10000) (reverse (number-sequence 4 10000)))))
+                         (cons 'singlets (mapcar #'(lambda (x) (char-to-string (decode-char 'ucs x))) (append (number-sequence 1 3) (reverse (number-sequence 10001 10009))))))
                    (list-utils-partition-dupes list 'list-utils-htt-case-fold-equal)))))
 
 (ert-deftest list-utils-partition-dupes-11 nil
