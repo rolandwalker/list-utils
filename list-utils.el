@@ -189,7 +189,7 @@
 
 (unless (fboundp 'string-utils-compress-whitespace)
   (defvar string-utils-whitespace
-    (concat (apply 'vector (mapcar #'(lambda (x) (decode-char 'ucs x)) '(#x00009 #x0000a #x0000b #x0000c #x0000d #x00020 #x00085 #x00088 #x00089 #x0008a #x000a0 #x01680 #x0180e #x02000 #x02001 #x02002 #x02003 #x02004 #x02005 #x02006 #x02007 #x02008 #x02009 #x0200a #x0200b #x02028 #x02029 #x0202f #x0205f #x02060 #x03000 #x0feff #xe0020))))
+    (concat (apply 'vector (delq nil (mapcar #'(lambda (x) (decode-char 'ucs x)) '(#x00009 #x0000a #x0000b #x0000c #x0000d #x00020 #x00085 #x00088 #x00089 #x0008a #x000a0 #x01680 #x0180e #x02000 #x02001 #x02002 #x02003 #x02004 #x02005 #x02006 #x02007 #x02008 #x02009 #x0200a #x0200b #x02028 #x02029 #x0202f #x0205f #x02060 #x03000 #x0feff #xe0020)))))
     "Definition of whitespace characters used by string-utils.
 
 Includes Unicode whitespace characters.")
