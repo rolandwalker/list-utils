@@ -4,7 +4,7 @@
 ;;
 ;; Author: Roland Walker <walker@pobox.com>
 ;; Homepage: http://github.com/rolandwalker/list-utils
-;; URL: http://raw.github.com/rolandwalker/list-utils/master/list-utils.el
+;; URL: http://raw.githubusercontent.com/rolandwalker/list-utils/master/list-utils.el
 ;; Version: 0.4.2
 ;; Last-Updated: 22 Oct 2013
 ;; EmacsWiki: ListUtils
