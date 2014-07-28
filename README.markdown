@@ -1,12 +1,10 @@
 [![Build Status](https://secure.travis-ci.org/rolandwalker/list-utils.png?branch=master)](http://travis-ci.org/rolandwalker/list-utils)
 
-Overview
-========
+# Overview
 
 List-manipulation utility functions for Emacs.
 
-Quickstart
-----------
+## Quickstart
 
 ```elisp
 (require 'list-utils)
@@ -29,8 +27,7 @@ Quickstart
 ;; '(:one 1 :three 3)
 ```
 
-Explanation
------------
+## Explanation
 
 List-utils is a collection of functions for list manipulation.
 This library has no user-level interface; it is only useful
@@ -92,14 +89,12 @@ Emacs can find it, and add the following to your ~/.emacs file:
 (require 'list-utils)
 ```
 
-Notes
------
+## Notes
 
 This library includes an implementation of the classic Lisp
 `tconc` which is outside the `list-utils-` namespace.
 
-Compatibility and Requirements
-------------------------------
+## Compatibility and Requirements
 
 	GNU Emacs version 24.4-devel     : yes, at the time of writing
 	GNU Emacs version 24.3           : yes
