@@ -8,7 +8,7 @@ List-manipulation utility functions for Emacs.
 Quickstart
 ----------
 
-```lisp
+```elisp
 (require 'list-utils)
  
 (list-utils-flatten '(1 2 (3 4 (5 6 7))))
@@ -88,7 +88,7 @@ The following functions are provided:
 To use list-utils, place the list-utils.el library somewhere
 Emacs can find it, and add the following to your ~/.emacs file:
 
-```lisp
+```elisp
 (require 'list-utils)
 ```
 
