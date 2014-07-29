@@ -82,8 +82,8 @@ The following functions are provided:
 	list-utils-plist-reverse
 	list-utils-plist-del
 
-To use list-utils, place the list-utils.el library somewhere
-Emacs can find it, and add the following to your ~/.emacs file:
+To use list-utils, place the `list-utils.el` library somewhere
+Emacs can find it, and add the following to your `~/.emacs` file:
 
 ```elisp
 (require 'list-utils)
