@@ -4,6 +4,11 @@
 
 List-manipulation utility functions for Emacs.
 
+ * [Quickstart](#quickstart)
+ * [Explanation](#explanation)
+ * [Notes](#notes)
+ * [Compatibility and Requirements](#compatibility-and-requirements)
+
 ## Quickstart
 
 ```elisp
@@ -35,12 +40,12 @@ for programming in Emacs Lisp.
 
 Notable functionality includes
 
-* `list-utils-flatten`, a robust list-flattener which handles
-   cyclic lists, non-nil-terminated lists, and preserves nils
-   when they are found as list elements.
+ * `list-utils-flatten`, a robust list-flattener which handles
+    cyclic lists, non-nil-terminated lists, and preserves nils
+    when they are found as list elements.
 
-* `tconc`, a simple data structure for efficiently appending
-   to a list
+ * `tconc`, a simple data structure for efficiently appending
+    to a list
 
 The following functions are provided:
 
