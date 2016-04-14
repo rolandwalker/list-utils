@@ -236,9 +236,9 @@ Non-string arguments are permitted, and will be compared after
 stringification by `format'.
 
 A hash-table-test is defined with the same name."
-  (compare-strings (if x (format "%s" x) "") nil nil
-                   (if y (format "%s" y) "") nil nil
-                   'ignore-case))
+  (eq t (compare-strings (if x (format "%s" x) "") nil nil
+                         (if y (format "%s" y) "") nil nil
+                         'ignore-case)))
 
 (define-hash-table-test 'list-utils-htt-case-fold-equal
                         'list-utils-htt-case-fold-equal

@@ -1944,13 +1944,9 @@
     (should (equal (append (number-sequence 1 3) (mapcar 'float (reverse (number-sequence 10001 10009))))
                    (list-utils-xor list-1 list-2 'list-utils-htt-=)))))
 
-;; @@@ todo: figure out the expected case-folded behavior for these Unicode characters.
-;;     This fails -- the output is reduced to only 3 characters, instead of the expected 12.
-;;     At first look, it seems like a bug/limitation in Emacs.  In any case, no casefolding
-;;     is applied to the test target set, so in principle this should be expected to fail.
+;; todo: use characters relevant to case-insensitivity
 (ert-deftest list-utils-xor-16 nil
   "Logical XOR operation with large lists and case-insensitive hash-table-test"
-  :expected-result :failed
   (let ((list-1 (mapcar #'(lambda (x) (char-to-string (decode-char 'ucs x)))          (number-sequence 1 10000)))
         (list-2 (mapcar #'(lambda (x) (char-to-string (decode-char 'ucs x))) (reverse (number-sequence 4 10009)))))
     (should (equal (mapcar #'(lambda (x) (char-to-string (decode-char 'ucs x))) (append (number-sequence 1 3) (reverse (number-sequence 10001 10009))))
@@ -2094,12 +2090,9 @@
     (should (equal (append (number-sequence 4 10000) (mapcar 'float (reverse (number-sequence 4 10000))))
                    (list-utils-dupes list 'list-utils-htt-=)))))
 
-;; @@@ Todo: figure out what is really the expected result, casefolding
-;;     across so many characters.  Without applying casefolding to the
-;;     test target set, this should not be expected to work.
+;; todo: use characters relevant to case-insensitivity
 (ert-deftest list-utils-dupes-09 nil
   "DUPES operation with large list and case-insensitive hash-table-test"
-  :expected-result :failed
   (let ((list (mapcar #'(lambda (x) (char-to-string (decode-char 'ucs x))) (append (number-sequence 1 10000) (reverse (number-sequence 4 10009))))))
     (should (equal (mapcar #'(lambda (x) (char-to-string (decode-char 'ucs x))) (append (number-sequence 4 10000) (reverse (number-sequence 4 10000))))
                    (list-utils-dupes list 'list-utils-htt-case-fold-equal)))))
@@ -2164,13 +2157,9 @@
     (should (equal (append (number-sequence 1 3) (mapcar 'float (reverse (number-sequence 10001 10009))))
                    (list-utils-singlets list 'list-utils-htt-=)))))
 
-;; @@@ Todo: figure out what is really the expected result, casefolding
-;;     across so many characters.  Without applying casefolding to the
-;;     test target set, this should not be expected to work. Length
-;;     of two lists is 12 vs 3.
+;; todo: use characters relevant to case-insensitivity
 (ert-deftest list-utils-singlets-09 nil
   "SINGLETS operation with large list and case-insensitive hash-table-test"
-  :expected-result :failed
   (let ((list (mapcar #'(lambda (x) (char-to-string (decode-char 'ucs x))) (append (number-sequence 1 10000) (reverse (number-sequence 4 10009))))))
     (should (equal (mapcar #'(lambda (x) (char-to-string (decode-char 'ucs x))) (append (number-sequence 1 3) (reverse (number-sequence 10001 10009))))
                    (list-utils-singlets list 'list-utils-htt-case-fold-equal)))))
@@ -2245,12 +2234,9 @@
                          (cons 'singlets (append (number-sequence 1 3) (mapcar 'float (reverse (number-sequence 10001 10009))))))
                    (list-utils-partition-dupes list 'list-utils-htt-=)))))
 
-;; @@@ Todo: figure out what is really the expected result, casefolding
-;;     across so many characters.  Without applying casefolding to the
-;;     test target set, this should not be expected to work.
+;; todo: use characters relevant to case-insensitivity
 (ert-deftest list-utils-partition-dupes-10 nil
   "PARTITION DUPES operation with large list and case-insensitive hash-table-test"
-  :expected-result :failed
   (let ((list (mapcar #'(lambda (x) (char-to-string (decode-char 'ucs x))) (append (number-sequence 1 10000) (reverse (number-sequence 4 10009))))))
     (should (equal (list (cons 'dupes    (mapcar #'(lambda (x) (char-to-string (decode-char 'ucs x))) (append (number-sequence 4 10000) (reverse (number-sequence 4 10000)))))
                          (cons 'singlets (mapcar #'(lambda (x) (char-to-string (decode-char 'ucs x))) (append (number-sequence 1 3) (reverse (number-sequence 10001 10009))))))
