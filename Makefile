@@ -1,6 +1,5 @@
 EMACS=emacs
 # EMACS=/Applications/Emacs.app/Contents/MacOS/Emacs
-# EMACS=/Applications/Emacs23.app/Contents/MacOS/Emacs
 # EMACS=/Applications/Aquamacs.app/Contents/MacOS/Aquamacs
 # EMACS=/Applications/Macmacs.app/Contents/MacOS/Emacs
 # EMACS=/usr/local/bin/emacs
@@ -12,9 +11,6 @@ INTERACTIVE_EMACS=/usr/local/bin/emacs
 # INTERACTIVE_EMACS=open -a Emacs.app --new --args
 # INTERACTIVE_EMACS=/Applications/Emacs.app/Contents/MacOS/Emacs
 # INTERACTIVE_EMACS=/Applications/Emacs.app/Contents/MacOS/bin/emacs
-
-RESOLVED_EMACS=$(shell readlink `which $(EMACS)` || echo "$(EMACS)")
-RESOLVED_INTERACTIVE_EMACS=$(shell readlink `which "$(INTERACTIVE_EMACS)"` || echo "$(INTERACTIVE_EMACS)")
 
 EMACS_CLEAN=-Q
 EMACS_BATCH=$(EMACS_CLEAN) --batch
@@ -41,7 +37,7 @@ TEST_DEP_1_LATEST_URL=http://git.savannah.gnu.org/cgit/emacs.git/plain/lisp/emac
  test-dep-5 test-dep-6 test-dep-7 test-dep-8 test-dep-9
 
 build :
-	$(RESOLVED_EMACS) $(EMACS_BATCH) --eval    \
+	$(EMACS) $(EMACS_BATCH) --eval    \
 	    "(progn                                \
 	      (setq byte-compile-error-on-warn t)  \
 	      (batch-byte-compile))" *.el
@@ -58,7 +54,7 @@ pkg-version :
 
 test-dep-1 :
 	@cd '$(TEST_DIR)'                                               && \
-	$(RESOLVED_EMACS) $(EMACS_BATCH)  -L . -L .. -l '$(TEST_DEP_1)' || \
+	$(EMACS) $(EMACS_BATCH)  -L . -L .. -l '$(TEST_DEP_1)' || \
 	(echo "Can't load test dependency $(TEST_DEP_1).el, run 'make downloads' to fetch it" ; exit 1)
 
 downloads :
@@ -68,13 +64,13 @@ downloads-latest :
 	$(CURL) '$(TEST_DEP_1_LATEST_URL)' > '$(TEST_DIR)/$(TEST_DEP_1).el'
 
 autoloads :
-	$(RESOLVED_EMACS) $(EMACS_BATCH) --eval              \
+	$(EMACS) $(EMACS_BATCH) --eval              \
 	    "(progn                                          \
 	      (setq generated-autoload-file \"$(WORK_DIR)/$(AUTOLOADS_FILE)\") \
 	      (update-directory-autoloads \"$(WORK_DIR)\"))"
 
 test-autoloads : autoloads
-	@$(RESOLVED_EMACS) $(EMACS_BATCH) -L . -l './$(AUTOLOADS_FILE)' || \
+	@$(EMACS) $(EMACS_BATCH) -L . -l './$(AUTOLOADS_FILE)' || \
 	 ( echo "failed to load autoloads: $(AUTOLOADS_FILE)" && false )
 
 test-travis :
@@ -88,7 +84,7 @@ test-prep : build test-dep-1 test-autoloads test-travis test-tests
 test-batch :
 	@cd '$(TEST_DIR)'                                 && \
 	(for test_lib in *-test.el; do                       \
-	   $(RESOLVED_EMACS) $(EMACS_BATCH) -L . -L .. -l cl \
+	   $(EMACS) $(EMACS_BATCH) -L . -L .. -l cl \
 	   -l '$(TEST_DEP_1)' -l "$$test_lib" --eval         \
 	    "(progn                                          \
 	      (fset 'ert--print-backtrace 'ignore)           \
@@ -98,7 +94,7 @@ test-batch :
 test-interactive : test-prep
 	@cd '$(TEST_DIR)'                                             && \
 	(for test_lib in *-test.el; do                                   \
-	    $(RESOLVED_INTERACTIVE_EMACS) $(EMACS_CLEAN) --eval          \
+	    $(INTERACTIVE_EMACS) $(EMACS_CLEAN) --eval          \
 	    "(progn                                                      \
 	      (cd \"$(WORK_DIR)/$(TEST_DIR)\")                           \
 	      (setq dired-use-ls-dired nil)                              \
@@ -123,7 +119,7 @@ test : test-prep test-batch
 
 run-pristine :
 	@cd '$(TEST_DIR)'                                              && \
-	$(RESOLVED_EMACS) $(EMACS_CLEAN) --eval                           \
+	$(EMACS) $(EMACS_CLEAN) --eval                           \
 	 "(progn                                                          \
 	   (setq package-enable-at-startup nil)                           \
 	   (setq package-load-list nil)                                   \
@@ -137,7 +133,7 @@ run-pristine :
 
 run-pristine-local :
 	@cd '$(TEST_DIR)'                                              && \
-	$(RESOLVED_EMACS) $(EMACS_CLEAN) --eval                           \
+	$(EMACS) $(EMACS_CLEAN) --eval                           \
 	 "(progn                                                          \
 	   (cd \"$(WORK_DIR)/$(TEST_DIR)\")                               \
 	   (setq dired-use-ls-dired nil)                                  \
@@ -158,7 +154,7 @@ upload-github :
 	@git push origin master
 
 upload-wiki : not-dirty
-	@$(RESOLVED_EMACS) $(EMACS_BATCH) --eval          \
+	@$(EMACS) $(EMACS_BATCH) --eval          \
 	 "(progn                                          \
 	   (setq package-load-list '((yaoddmuse t)))      \
 	   (when (fboundp 'package-initialize)            \
