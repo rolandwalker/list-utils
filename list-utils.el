@@ -170,8 +170,8 @@
 
 ;;; requirements
 
-;; for defstruct, assert, setf, callf, loop
-(require 'cl)
+;; for cl-defstruct, cl-assert, cl-setf, cl-callf, cl-loop
+(require 'cl-lib)
 
 ;;; declarations
 
@@ -201,7 +201,7 @@ Includes Unicode whitespace characters.")
     "Return STR-VAL with all contiguous whitespace compressed to a single space.
 WHITESPACE-TYPE is ignored.
 SEPARATOR is the string with which to replace any whitespace."
-    (callf or separator " ")
+    (cl-callf or separator " ")
     (let ((whitespace-regexp (concat "[" string-utils-whitespace "]")))
       (save-match-data
         (replace-regexp-in-string (concat whitespace-regexp "+") separator
@@ -265,14 +265,14 @@ A hash-table-test is defined with the same name."
 ;;;###autoload
 (progn
   (require 'cl)
-  (defstruct tconc head tail))
+  (cl-defstruct tconc head tail))
 
 ;;;###autoload
 (defun tconc-list (tc list)
   "Efficiently append LIST to TC.
 
 TC is a data structure created by `make-tconc'."
-  (assert (tconc-p tc) nil "TC must be created by `make-tconc'.")
+  (cl-assert (tconc-p tc) nil "TC must be created by `make-tconc'.")
   (when list
     (if (null (tconc-tail tc))
         (setf (tconc-head tc) list)
@@ -331,14 +331,14 @@ Optional RECUR-INTERNAL is for internal use only.
 
 Improper lists consist of proper lists consed to a final
 element, and are produced by `list*'."
-  (assert (or recur-internal (listp list)) nil "LIST is not a list")
+  (cl-assert (or recur-internal (listp list)) nil "LIST is not a list")
   (cond
     ((not tree)
      (let ((tail (list-utils-cons-cell-p list)))
        (cond
          (tail
           (append
-           (subseq list 0 (safe-length list))
+           (cl-subseq list 0 (safe-length list))
            (list tail)))
          (t
           (copy-sequence list)))))
@@ -362,15 +362,15 @@ improper lists contained within into proper lists.
 Optional RECUR-INTERNAL is for internal use only.
 
 Modifies LIST and returns the modified value."
-  (assert (or recur-internal (listp list)) nil "LIST is not a list")
+  (cl-assert (or recur-internal (listp list)) nil "LIST is not a list")
   (cond
     ((not tree)
      (when (list-utils-cons-cell-p list)
-       (callf list (nthcdr (safe-length list) list)))
+       (cl-callf list (nthcdr (safe-length list) list)))
      list)
     ((consp list)
-     (loop for elt in (list-utils-make-proper-inplace list nil 'recur)
-           do (list-utils-make-proper-inplace elt 'tree 'recur))
+     (cl-loop for elt in (list-utils-make-proper-inplace list nil 'recur)
+              do (list-utils-make-proper-inplace elt 'tree 'recur))
      list)
     (t
      list)))
@@ -387,19 +387,19 @@ If optional TREE is non-nil, traverse LIST, making proper
 copies of any improper lists contained within.
 
 Optional RECUR-INTERNAL is for internal use only."
-  (assert (or recur-internal (listp list)) nil "LIST is not a list")
-  (assert (or recur-internal (> (safe-length list) 1)) nil "LIST has only one element")
+  (cl-assert (or recur-internal (listp list)) nil "LIST is not a list")
+  (cl-assert (or recur-internal (> (safe-length list) 1)) nil "LIST has only one element")
   (cond
     ((not tree)
      (let ((tail (list-utils-cons-cell-p list)))
        (cond
          (tail
-          (copy-list list))
+          (cl-copy-list list))
          (t
-          (apply 'list* list)))))
+          (apply 'cl-list* list)))))
     ((and (consp list)
           (> (safe-length list) 1))
-     (apply 'list*
+     (apply 'cl-list*
             (mapcar #'(lambda (elt)
                         (list-utils-make-improper-copy elt 'tree 'recur))
                     (list-utils-make-proper-copy list nil 'recur))))
@@ -419,8 +419,8 @@ proper lists contained within into improper lists.
 Optional RECUR-INTERNAL is for internal use only.
 
 Modifies LIST and returns the modified value."
-  (assert (or recur-internal (listp list)) nil "LIST is not a list")
-  (assert (or recur-internal (> (safe-length list) 1)) nil "LIST has only one element")
+  (cl-assert (or recur-internal (listp list)) nil "LIST is not a list")
+  (cl-assert (or recur-internal (> (safe-length list) 1)) nil "LIST has only one element")
   (cond
     ((not tree)
      (unless (list-utils-cons-cell-p list)
@@ -428,8 +428,8 @@ Modifies LIST and returns the modified value."
      list)
     ((and (consp list)
           (> (safe-length list) 1))
-     (loop for elt in (list-utils-make-improper-inplace list nil 'recur)
-           do (list-utils-make-improper-inplace elt 'tree 'recur))
+     (cl-loop for elt in (list-utils-make-improper-inplace list nil 'recur)
+              do (list-utils-make-improper-inplace elt 'tree 'recur))
      list)
     (t
      list)))
@@ -445,7 +445,7 @@ LIST are included in a cycle, return nil.
 As an optimization, CYCLE-LENGTH may be specified if the length
 of the cyclic portion is already known.  Otherwise it will be
 calculated from LIST."
-  (callf or cycle-length (list-utils-cyclic-length list))
+  (cl-callf or cycle-length (list-utils-cyclic-length list))
   (if (= 0 cycle-length)
       list
     ;; else
@@ -502,7 +502,7 @@ If LIST is completely linear, return 0."
           (counter 0))
       (catch 'cycle
         (while slow
-          (incf counter)
+          (cl-incf counter)
           (setq slow (cdr slow))
           (setq fast (cdr (cdr fast)))
           (when (eq slow list)
@@ -564,7 +564,7 @@ If the car of LIST is a cons, return 0."
           (dolist (elt list)
             (when (consp elt)
               (throw 'saw-depth t))
-            (incf counter))))
+            (cl-incf counter))))
   counter))
 
 ;;;###autoload
@@ -575,7 +575,7 @@ If optional TREE is non-nil, traverse LIST, substituting
 linearized copies of any cyclic lists contained within."
   (cond
     ((not tree)
-     (subseq list 0 (list-utils-safe-length list)))
+     (cl-subseq list 0 (list-utils-safe-length list)))
     ((consp list)
      (mapcar #'(lambda (elt)
                  (list-utils-make-linear-copy elt 'tree))
@@ -617,7 +617,7 @@ Optional TEST specifies a test, defaulting to `equal'.
 
 If LIST-1 and LIST-2 are not actually lists, they are still
 compared according to TEST."
-  (callf or test 'equal)
+  (cl-callf or test 'equal)
   (cond
     ((and (not (listp list-1))
           (not (listp list-2)))
@@ -637,16 +637,16 @@ compared according to TEST."
               (last-cdr-2 nil))
          (unless (= clen-1 clen-2)
            (throw 'match nil))
-         (loop for a in cyclic-1
-               for b in cyclic-2
-               unless (list-utils-safe-equal a b) do (throw 'match nil))
+         (cl-loop for a in cyclic-1
+                  for b in cyclic-2
+                  unless (list-utils-safe-equal a b) do (throw 'match nil))
          (setq linear-1 (list-utils-linear-subseq list-1 clen-1))
          (setq linear-2 (list-utils-linear-subseq list-2 clen-2))
          (unless (= (list-utils-safe-length linear-1) (list-utils-safe-length linear-2))
            (throw 'match nil))
-         (loop for a in linear-1
-               for b in linear-2
-               unless (list-utils-safe-equal a b) do (throw 'match nil))
+         (cl-loop for a in linear-1
+                  for b in linear-2
+                  unless (list-utils-safe-equal a b) do (throw 'match nil))
          (setq last-cdr-1 (list-utils-improper-p linear-1))
          (setq last-cdr-2 (list-utils-improper-p linear-2))
          (when (or (if last-cdr-1 (not last-cdr-2) last-cdr-2)
@@ -699,7 +699,7 @@ flattens circular list structures."
 
     ((listp list)
      (let ((extent (list-utils-flat-length list)))
-       (append (subseq list 0 extent)
+       (append (cl-subseq list 0 extent)
                (list-utils-flatten (nthcdr extent list)))))
 
     (t
@@ -713,16 +713,16 @@ Optional TEST sets the test used for a matching element, and
 defaults to `equal'.
 
 LIST is modified and the new value is returned."
-  (callf or test 'equal)
+  (cl-callf or test 'equal)
   (let ((improper (list-utils-improper-p list))
         (pos nil))
     (when improper
-      (callf list-utils-make-proper-inplace list))
-    (setq pos (position element list :test test))
-    (assert pos nil "Element not found: %s" element)
+      (cl-callf list-utils-make-proper-inplace list))
+    (setq pos (cl-position element list :test test))
+    (cl-assert pos nil "Element not found: %s" element)
     (push new-element (nthcdr pos list))
     (when improper
-      (callf list-utils-make-improper-inplace list)))
+      (cl-callf list-utils-make-improper-inplace list)))
   list)
 
 ;;;###autoload
@@ -733,16 +733,16 @@ Optional TEST sets the test used for a matching element, and
 defaults to `equal'.
 
 LIST is modified and the new value is returned."
-  (callf or test 'equal)
+  (cl-callf or test 'equal)
   (let ((improper (list-utils-improper-p list))
         (pos nil))
     (when improper
-      (callf list-utils-make-proper-inplace list))
-    (setq pos (position element list :test test))
-    (assert pos nil "Element not found: %s" element)
+      (cl-callf list-utils-make-proper-inplace list))
+    (setq pos (cl-position element list :test test))
+    (cl-assert pos nil "Element not found: %s" element)
     (push new-element (cdr (nthcdr pos list)))
     (when improper
-      (callf list-utils-make-improper-inplace list)))
+      (cl-callf list-utils-make-improper-inplace list)))
   list)
 
 ;;;###autoload
@@ -754,14 +754,14 @@ POS is zero-indexed.
 LIST is modified and the new value is returned."
   (let ((improper (list-utils-improper-p list)))
     (when improper
-      (callf list-utils-make-proper-inplace list))
-    (assert (and (integerp pos)
+      (cl-callf list-utils-make-proper-inplace list))
+    (cl-assert (and (integerp pos)
                  (>= pos 0)
                  (< pos (length list))) nil "No such position %s" pos)
     (push new-element
           (nthcdr pos list))
     (when improper
-      (callf list-utils-make-improper-inplace list)))
+      (cl-callf list-utils-make-improper-inplace list)))
   list)
 
 ;;;###autoload
@@ -771,14 +771,14 @@ LIST is modified and the new value is returned."
 LIST is modified and the new value is returned."
   (let ((improper (list-utils-improper-p list)))
     (when improper
-      (callf list-utils-make-proper-inplace list))
-    (assert (and (integerp pos)
-                 (>= pos 0)
-                 (< pos (length list))) nil "No such position %s" pos)
+      (cl-callf list-utils-make-proper-inplace list))
+    (cl-assert (and (integerp pos)
+                    (>= pos 0)
+                    (< pos (length list))) nil "No such position %s" pos)
     (push new-element
           (cdr (nthcdr pos list)))
     (when improper
-      (callf list-utils-make-improper-inplace list)))
+      (cl-callf list-utils-make-improper-inplace list)))
   list)
 
 ;;;###autoload
@@ -818,7 +818,7 @@ heavy-duty list operations, performance may be improved by
 `let'ing `gc-cons-threshold' to a high value around sections that
 make frequent use of this function."
   (when flip
-    (psetq list1 list2 list2 list1))
+    (cl-psetq list1 list2 list2 list1))
   (cond
     ((null list1)
      list2)
@@ -864,7 +864,7 @@ returned.
 
 Performance: see notes under `list-utils-and'."
   (when flip
-    (psetq list1 list2 list2 list1))
+    (cl-psetq list1 list2 list2 list1))
   (cond
     ((null list1)
      nil)
@@ -1058,7 +1058,7 @@ If the car of LIST is a list, return 0."
             (when (and (consp elt)
                        (not (list-utils-cons-cell-p elt)))
               (throw 'saw-depth t))
-            (incf counter))))
+            (cl-incf counter))))
   counter))
 
 ;;;###autoload
@@ -1092,7 +1092,7 @@ pair."
 
     ((listp list)
      (let ((extent (list-utils-alist-or-flat-length list)))
-       (append (subseq list 0 extent)
+       (append (cl-subseq list 0 extent)
                (list-utils-alist-flatten (nthcdr extent list)))))
 
     (t
@@ -1103,10 +1103,10 @@ pair."
 ;;;###autoload
 (defun list-utils-plist-reverse (plist)
   "Return reversed copy of property-list PLIST, maintaining pair associations."
-  (assert (= 0 (% (length plist) 2)) nil "Not a PLIST")
-  (loop for (a b) on (reverse plist) by 'cddr
-        collect b
-        collect a))
+  (cl-assert (= 0 (% (length plist) 2)) nil "Not a PLIST")
+  (cl-loop for (a b) on (reverse plist) by 'cddr
+           collect b
+           collect a))
 
 ;;;###autoload
 (defun list-utils-plist-del (plist prop)
@@ -1118,10 +1118,10 @@ The new plist is returned; use `(setq x (list-utils-plist-del x prop))'
 to be sure to use the new value.
 
 This functionality overlaps with the undocumented `cl-do-remf'."
-  (let ((prop-pos (position prop plist)))
+  (let ((prop-pos (cl-position prop plist)))
     (when (and prop-pos
                (= 0 (% prop-pos 2)))
-      (callf cddr (nthcdr prop-pos plist))))
+      (cl-callf cddr (nthcdr prop-pos plist))))
   plist)
 
 (provide 'list-utils)
