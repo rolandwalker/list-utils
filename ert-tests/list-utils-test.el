@@ -1,16 +1,5 @@
-
 (require 'list-utils)
-
-(eval-and-compile
-  (require 'cl)
-  (unless (fboundp 'cl-remove-duplicates)
-    (defalias 'cl-remove-duplicates 'remove-duplicates))
-  (unless (fboundp 'cl-set-difference)
-    (defalias 'cl-set-difference 'set-difference))
-  (unless (fboundp 'cl-set-exclusive-or)
-    (defalias 'cl-set-exclusive-or 'set-exclusive-or))
-  (unless (fboundp 'cl-intersection)
-    (defalias 'cl-intersection 'intersection)))
+(require 'cl-seq)
 
 ;;; utility functions for testing
 
@@ -1994,9 +1983,9 @@
                    (list-utils-uniq list 'list-utils-htt-case-fold-equal)))))
 
 (ert-deftest list-utils-uniq-05 nil
-  "UNIQ operation should be identical to `remove-duplicates' after sort"
+  "UNIQ operation should be identical to `cl-remove-duplicates' after sort"
   (let ((list '(A a a 8 8 1 2 4 3 3 3 4.0 5 6 7 9 9 5)))
-    (should (equal (sort (remove-duplicates list) 'list-utils-test-soft-string-lessp)
+    (should (equal (sort (cl-remove-duplicates list) 'list-utils-test-soft-string-lessp)
                    (sort (list-utils-uniq list) 'list-utils-test-soft-string-lessp)))))
 
 (ert-deftest list-utils-uniq-06 nil
@@ -2031,9 +2020,9 @@
                    (list-utils-uniq list 'list-utils-htt-case-fold-equal)))))
 
 (ert-deftest list-utils-uniq-10 nil
-  "UNIQ operation with large list should be identical to `remove-duplicates' after sort"
+  "UNIQ operation with large list should be identical to `cl-remove-duplicates' after sort"
   (let ((list (append (number-sequence 1 10000) (reverse (number-sequence 4 10009)))))
-    (should (equal (sort (remove-duplicates list) 'list-utils-test-soft-string-lessp)
+    (should (equal (sort (cl-remove-duplicates list) 'list-utils-test-soft-string-lessp)
                    (sort (list-utils-uniq list) 'list-utils-test-soft-string-lessp)))))
 
 
@@ -2069,7 +2058,7 @@
     (should (equal (list-utils-and list
                                    (list-utils-singlets
                                     (append (list-utils-singlets list)
-                                            (remove-duplicates list))))
+                                            (cl-remove-duplicates list))))
                    (list-utils-dupes list)))))
 
 (ert-deftest list-utils-dupes-06 nil
@@ -2103,7 +2092,7 @@
     (should (equal (list-utils-and list
                                    (list-utils-singlets
                                     (append (list-utils-singlets list)
-                                            (remove-duplicates list))))
+                                            (cl-remove-duplicates list))))
                    (list-utils-dupes list)))))
 
 
