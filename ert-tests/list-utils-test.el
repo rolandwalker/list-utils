@@ -1,5 +1,6 @@
 (require 'list-utils)
 (require 'cl-seq)
+(require 'cl-macs)
 
 ;;; utility functions for testing
 
@@ -10,11 +11,11 @@
 ;;; make-tconc
 
 (ert-deftest make-tconc-01 nil
-  (should (equal '[cl-struct-tconc nil nil]
+  (should (equal #s(tconc nil nil)
                  (make-tconc))))
 
 (ert-deftest make-tconc-02 nil
-  (should (equal '[cl-struct-tconc (1 2 3) (3)]
+  (should (equal #s(tconc (1 2 3) (3))
                  (let ((lst '(1 2 3)))
                    (make-tconc :head lst :tail (last lst))))))
 
@@ -28,7 +29,7 @@
                    (tconc-list tc '(4 5))))))
 
 (ert-deftest tconc-list-02 nil
-  (should (equal '[cl-struct-tconc (1 2 3 4 5) (5)]
+  (should (equal #s(tconc (1 2 3 4 5) (5))
                  (let ((tc (make-tconc)))
                    (tconc-list tc '(1 2 3))
                    (tconc-list tc '(4 5))
@@ -44,7 +45,7 @@
                    (tconc tc 4 5)))))
 
 (ert-deftest tconc-02 nil
-  (should (equal '[cl-struct-tconc (1 2 3 4 5) (5)]
+  (should (equal #s(tconc (1 2 3 4 5) (5))
                  (let ((tc (make-tconc)))
                    (tconc tc 1 2 3)
                    (tconc tc 4 5)
@@ -95,13 +96,14 @@
 
 (ert-deftest list-utils-make-proper-copy-03 nil
   "Non-list"
-  (should-error
-   (list-utils-make-proper-copy 1)))
+  (let ((debug-on-error nil))
+    (should-error
+     (list-utils-make-proper-copy 1))))
 
 (ert-deftest list-utils-make-proper-copy-04 nil
   "Two elt cons"
   (let* ((proper '(1 2))
-         (improper (apply 'list* proper))
+         (improper (apply 'cl-list* proper))
          (backup (copy-tree improper)))
     (should-not
      (equal proper improper))
@@ -115,7 +117,7 @@
 (ert-deftest list-utils-make-proper-copy-05 nil
   "Multi-elt improper list"
   (let* ((proper '(a b c d e f))
-         (improper (apply 'list* proper))
+         (improper (apply 'cl-list* proper))
          (backup (copy-tree improper)))
     (should-not
      (equal proper improper))
@@ -157,13 +159,14 @@
 
 (ert-deftest list-utils-make-proper-copy-09 nil
   "With 'tree. Non-list"
-  (should-error
-   (list-utils-make-proper-copy 1)))
+  (let ((debug-on-error nil))
+    (should-error
+     (list-utils-make-proper-copy 1))))
 
 (ert-deftest list-utils-make-proper-copy-10 nil
   "With 'tree. Two elt cons"
   (let* ((proper '(1 2))
-         (improper (apply 'list* proper))
+         (improper (apply 'cl-list* proper))
          (backup (copy-tree improper)))
     (should-not
      (equal proper improper))
@@ -177,7 +180,7 @@
 (ert-deftest list-utils-make-proper-copy-11 nil
   "With 'tree. Multi-elt improper list"
   (let* ((proper '(a b c d e f))
-         (improper (apply 'list* proper))
+         (improper (apply 'cl-list* proper))
          (backup (copy-tree improper)))
     (should-not
      (equal proper improper))
@@ -236,13 +239,14 @@
 
 (ert-deftest list-utils-make-proper-inplace-03 nil
   "Non-list"
-  (should-error
-   (list-utils-make-proper-inplace 1)))
+  (let ((debug-on-error nil))
+    (should-error
+     (list-utils-make-proper-inplace 1))))
 
 (ert-deftest list-utils-make-proper-inplace-04 nil
   "Two elt cons"
   (let* ((proper '(1 2))
-         (improper (apply 'list* proper)))
+         (improper (apply 'cl-list* proper)))
     (should-not
      (equal proper improper))
     (should
@@ -255,7 +259,7 @@
 (ert-deftest list-utils-make-proper-inplace-05 nil
   "Multi-elt improper list"
   (let* ((proper '(a b c d e f))
-         (improper (apply 'list* proper)))
+         (improper (apply 'cl-list* proper)))
     (should-not
      (equal proper improper))
     (should
@@ -296,13 +300,14 @@
 
 (ert-deftest list-utils-make-proper-inplace-09 nil
   "With 'tree. Non-list"
-  (should-error
-   (list-utils-make-proper-inplace 1 'tree)))
+  (let ((debug-on-error nil))
+    (should-error
+     (list-utils-make-proper-inplace 1 'tree))))
 
 (ert-deftest list-utils-make-proper-inplace-10 nil
   "With 'tree. Two elt cons"
   (let* ((proper '(1 2))
-         (improper (apply 'list* proper)))
+         (improper (apply 'cl-list* proper)))
     (should-not
      (equal proper improper))
     (should
@@ -315,7 +320,7 @@
 (ert-deftest list-utils-make-proper-inplace-11 nil
   "With 'tree. Multi-elt improper list"
   (let* ((proper '(a b c d e f))
-         (improper (apply 'list* proper)))
+         (improper (apply 'cl-list* proper)))
     (should-not
      (equal proper improper))
     (should
@@ -367,18 +372,20 @@
 
 (ert-deftest list-utils-make-improper-copy-02 nil
   "Nil"
-  (should-error
-   (list-utils-make-improper-copy nil)))
+  (let ((debug-on-error nil))
+    (should-error
+     (list-utils-make-improper-copy nil))))
 
 (ert-deftest list-utils-make-improper-copy-03 nil
   "Non-list"
-  (should-error
-   (list-utils-make-improper-copy 1)))
+  (let ((debug-on-error nil))
+    (should-error
+     (list-utils-make-improper-copy 1))))
 
 (ert-deftest list-utils-make-improper-copy-04 nil
   "Two elt list"
   (let* ((proper '(1 2))
-         (improper (apply 'list* proper))
+         (improper (apply 'cl-list* proper))
          (backup (copy-tree proper)))
     (should-not
      (equal improper proper))
@@ -392,7 +399,7 @@
 (ert-deftest list-utils-make-improper-copy-05 nil
   "Multi-elt list"
   (let* ((proper '(a b c d e f))
-         (improper (apply 'list* proper))
+         (improper (apply 'cl-list* proper))
          (backup (copy-tree proper)))
     (should-not
      (equal improper proper))
@@ -409,8 +416,9 @@
          (copy (copy-tree proper)))
     (should
      (equal proper copy))
-    (should-error
-     (list-utils-make-improper-copy copy))))
+    (let ((debug-on-error nil))
+      (should-error
+       (list-utils-make-improper-copy copy)))))
 
 (ert-deftest list-utils-make-improper-copy-07 nil
   "With 'tree. Already improper"
@@ -426,18 +434,20 @@
 
 (ert-deftest list-utils-make-improper-copy-08 nil
   "With 'tree. Nil"
-  (should-error
-   (list-utils-make-improper-copy nil 'tree)))
+  (let ((debug-on-error nil))
+    (should-error
+     (list-utils-make-improper-copy nil 'tree))))
 
 (ert-deftest list-utils-make-improper-copy-09 nil
   "With 'tree. Non-list"
-  (should-error
-   (list-utils-make-improper-copy 1 'tree)))
+  (let ((debug-on-error nil))
+    (should-error
+     (list-utils-make-improper-copy 1 'tree))))
 
 (ert-deftest list-utils-make-improper-copy-10 nil
   "With 'tree. Two elt list"
   (let* ((proper '(1 2))
-         (improper (apply 'list* proper))
+         (improper (apply 'cl-list* proper))
          (backup (copy-tree proper)))
     (should-not
      (equal improper proper))
@@ -451,7 +461,7 @@
 (ert-deftest list-utils-make-improper-copy-11 nil
   "With 'tree. Multi-elt list"
   (let* ((proper '(a b c d e f))
-         (improper (apply 'list* proper))
+         (improper (apply 'cl-list* proper))
          (backup (copy-tree proper)))
     (should-not
      (equal improper proper))
@@ -468,8 +478,9 @@
          (copy (copy-tree proper)))
     (should
      (equal proper copy))
-    (should-error
-     (list-utils-make-improper-copy copy 'tree))))
+    (let ((debug-on-error nil))
+      (should-error
+       (list-utils-make-improper-copy copy 'tree)))))
 
 (ert-deftest list-utils-make-improper-copy-13 nil
   "With 'tree. Deep structure."
@@ -502,18 +513,20 @@
 
 (ert-deftest list-utils-make-improper-inplace-02 nil
   "Nil"
-  (should-error
-   (list-utils-make-improper-inplace nil)))
+  (let ((debug-on-error nil))
+    (should-error
+     (list-utils-make-improper-inplace nil))))
 
 (ert-deftest list-utils-make-improper-inplace-03 nil
   "Non-list"
-  (should-error
-   (list-utils-make-improper-inplace 1)))
+  (let ((debug-on-error nil))
+    (should-error
+     (list-utils-make-improper-inplace 1))))
 
 (ert-deftest list-utils-make-improper-inplace-04 nil
   "Two elt list"
   (let* ((proper '(1 2))
-         (improper (apply 'list* proper)))
+         (improper (apply 'cl-list* proper)))
     (should-not
      (equal improper proper))
     (should
@@ -526,7 +539,7 @@
 (ert-deftest list-utils-make-improper-inplace-05 nil
   "Multi-elt list"
   (let* ((proper '(a b c d e f))
-         (improper (apply 'list* proper)))
+         (improper (apply 'cl-list* proper)))
     (should-not
      (equal improper proper))
     (should
@@ -542,8 +555,9 @@
          (copy (copy-tree proper)))
     (should
      (equal proper copy))
-    (should-error
-     (list-utils-make-improper-inplace copy))))
+    (let ((debug-on-error nil))
+      (should-error
+       (list-utils-make-improper-inplace copy)))))
 
 (ert-deftest list-utils-make-improper-inplace-07 nil
   "With 'tree. Already improper"
@@ -559,18 +573,20 @@
 
 (ert-deftest list-utils-make-improper-inplace-08 nil
   "With 'tree. Nil"
-  (should-error
-   (list-utils-make-improper-inplace nil 'tree)))
+  (let ((debug-on-error nil))
+    (should-error
+     (list-utils-make-improper-inplace nil 'tree))))
 
 (ert-deftest list-utils-make-improper-inplace-09 nil
   "With 'tree. Non-list"
-  (should-error
-   (list-utils-make-improper-inplace 1 'tree)))
+  (let ((debug-on-error nil))
+    (should-error
+     (list-utils-make-improper-inplace 1 'tree))))
 
 (ert-deftest list-utils-make-improper-inplace-10 nil
   "With 'tree. Two elt list"
   (let* ((proper '(1 2))
-         (improper (apply 'list* proper)))
+         (improper (apply 'cl-list* proper)))
     (should-not
      (equal improper proper))
     (should
@@ -583,7 +599,7 @@
 (ert-deftest list-utils-make-improper-inplace-11 nil
   "With 'tree. Multi-elt list"
   (let* ((proper '(a b c d e f))
-         (improper (apply 'list* proper)))
+         (improper (apply 'cl-list* proper)))
     (should-not
      (equal improper proper))
     (should
@@ -599,8 +615,9 @@
          (copy (copy-tree proper)))
     (should
      (equal proper copy))
-    (should-error
-     (list-utils-make-improper-inplace copy 'tree))))
+    (let ((debug-on-error nil))
+      (should-error
+       (list-utils-make-improper-inplace copy 'tree)))))
 
 (ert-deftest list-utils-make-improper-inplace-13 nil
   "With 'tree. Deep structure."
@@ -642,7 +659,7 @@
 
 (ert-deftest list-utils-cyclic-length-05 nil
   (should (= 0
-             (list-utils-cyclic-length (list* 1 2 3)))))
+             (list-utils-cyclic-length (cl-list* 1 2 3)))))
 
 (ert-deftest list-utils-cyclic-length-06 nil
   (let ((cyclic '(1)))
@@ -691,7 +708,7 @@
 
 (ert-deftest list-utils-cyclic-subseq-08 nil
   (should-not
-   (list-utils-cyclic-subseq (list* 1 2 3))))
+   (list-utils-cyclic-subseq (cl-list* 1 2 3))))
 
 (ert-deftest list-utils-cyclic-subseq-09 nil
   (let ((cyclic '(1)))
@@ -747,7 +764,7 @@
 
 (ert-deftest list-utils-cyclic-p-09 nil
   (should-not
-   (list-utils-cyclic-p (list* 1 2 3))))
+   (list-utils-cyclic-p (cl-list* 1 2 3))))
 
 (ert-deftest list-utils-cyclic-p-10 nil
   (should
@@ -790,7 +807,7 @@
 
 (ert-deftest list-utils-linear-p-07 nil
   (should
-   (list-utils-linear-p (list* 1 2 3))))
+   (list-utils-linear-p (cl-list* 1 2 3))))
 
 (ert-deftest list-utils-linear-p-08 nil
   (let ((cyclic '(1)))
@@ -825,9 +842,9 @@
                    (list-utils-linear-subseq improper)))))
 
 (ert-deftest list-utils-linear-subseq-05 nil
-  (let ((improper (list* 1 2 3)))
+  (let ((improper (cl-list* 1 2 3)))
     (should (equal improper
-                   (list-utils-linear-subseq (list* 1 2 3))))))
+                   (list-utils-linear-subseq (cl-list* 1 2 3))))))
 
 (ert-deftest list-utils-linear-subseq-06 nil
   (let ((cyclic '(1)))
@@ -875,7 +892,7 @@
 
 (ert-deftest list-utils-safe-length-08 nil
   (should (= 2
-             (list-utils-safe-length (list* 1 2 3)))))
+             (list-utils-safe-length (cl-list* 1 2 3)))))
 
 (ert-deftest list-utils-safe-length-09 nil
   (let ((cyclic '(1)))
@@ -1200,7 +1217,7 @@
 
 (ert-deftest list-utils-safe-equal-10 nil
   "Improper list"
-  (let* ((value (list* 1 2 3))
+  (let* ((value (cl-list* 1 2 3))
          (copy-1 (copy-tree value))
          (copy-2 (copy-tree value)))
     (should
@@ -1210,15 +1227,15 @@
 
 (ert-deftest list-utils-safe-equal-11 nil
   "Improper list"
-  (let* ((value-1 (list* 1 2 3))
-         (value-2 (list* 1 2)))
+  (let* ((value-1 (cl-list* 1 2 3))
+         (value-2 (cl-list* 1 2)))
     (should-not
      (list-utils-safe-equal value-1 value-2))))
 
 (ert-deftest list-utils-safe-equal-12 nil
   "Improper list"
-  (let* ((value-1 (list* 1 2 3))
-         (value-2 (list* 1 2 4)))
+  (let* ((value-1 (cl-list* 1 2 3))
+         (value-2 (cl-list* 1 2 4)))
     (should-not
      (list-utils-safe-equal value-1 value-2))))
 
@@ -1285,8 +1302,8 @@
             (list-utils-linear-subseq cyclic-2)))
     (should
      (equal
-      (subseq (list-utils-cyclic-subseq cyclic-1) 0 (list-utils-safe-length (list-utils-cyclic-subseq cyclic-1)))
-      (subseq (list-utils-cyclic-subseq cyclic-2) 0 (list-utils-safe-length (list-utils-cyclic-subseq cyclic-2)))))))
+      (cl-subseq (list-utils-cyclic-subseq cyclic-1) 0 (list-utils-safe-length (list-utils-cyclic-subseq cyclic-1)))
+      (cl-subseq (list-utils-cyclic-subseq cyclic-2) 0 (list-utils-safe-length (list-utils-cyclic-subseq cyclic-2)))))))
 
 
 ;;; list-utils-depth
@@ -1372,8 +1389,8 @@
             (list-utils-linear-subseq cyclic-2)))
     (should
      (equal
-      (subseq (list-utils-cyclic-subseq cyclic-1) 0 (list-utils-safe-length (list-utils-cyclic-subseq cyclic-1)))
-      (subseq (list-utils-cyclic-subseq cyclic-2) 0 (list-utils-safe-length (list-utils-cyclic-subseq cyclic-2)))))))
+      (cl-subseq (list-utils-cyclic-subseq cyclic-1) 0 (list-utils-safe-length (list-utils-cyclic-subseq cyclic-1)))
+      (cl-subseq (list-utils-cyclic-subseq cyclic-2) 0 (list-utils-safe-length (list-utils-cyclic-subseq cyclic-2)))))))
 
 
 ;;; list-utils-alist-or-flat-length
@@ -1420,8 +1437,8 @@
             (list-utils-linear-subseq cyclic-2)))
     (should
      (equal
-      (subseq (list-utils-cyclic-subseq cyclic-1) 0 (list-utils-safe-length (list-utils-cyclic-subseq cyclic-1)))
-      (subseq (list-utils-cyclic-subseq cyclic-2) 0 (list-utils-safe-length (list-utils-cyclic-subseq cyclic-2)))))))
+      (cl-subseq (list-utils-cyclic-subseq cyclic-1) 0 (list-utils-safe-length (list-utils-cyclic-subseq cyclic-1)))
+      (cl-subseq (list-utils-cyclic-subseq cyclic-2) 0 (list-utils-safe-length (list-utils-cyclic-subseq cyclic-2)))))))
 
 
 ;;; list-utils-insert-before
@@ -1439,29 +1456,31 @@
                  (list-utils-insert-before '(1 2 3 4 5) 5 'elt))))
 
 (ert-deftest list-utils-insert-before-04 nil
-  (should-error
-   (list-utils-insert-before '(1 2 3 4 5) 6 'elt)))
+  (let ((debug-on-error nil))
+    (should-error
+     (list-utils-insert-before '(1 2 3 4 5) 6 'elt))))
 
 (ert-deftest list-utils-insert-before-05 nil
-  (should (equal (list* 'elt 1 2)
+  (should (equal (cl-list* 'elt 1 2)
              (list-utils-insert-before (cons 1 2) 1 'elt))))
 
 (ert-deftest list-utils-insert-before-06 nil
-  (should (equal (list* 1 'elt 2)
+  (should (equal (cl-list* 1 'elt 2)
                  (list-utils-insert-before (cons 1 2) 2 'elt))))
 
 (ert-deftest list-utils-insert-before-07 nil
-  (should (equal (list* 1 'elt 2 3)
-                 (list-utils-insert-before (list* 1 2 3) 2 'elt))))
+  (should (equal (cl-list* 1 'elt 2 3)
+                 (list-utils-insert-before (cl-list* 1 2 3) 2 'elt))))
 
 (ert-deftest list-utils-insert-before-08 nil
-  (should (equal (list* 1 2 'elt 3)
-                 (list-utils-insert-before (list* 1 2 3) 3 'elt))))
+  (should (equal (cl-list* 1 2 'elt 3)
+                 (list-utils-insert-before (cl-list* 1 2 3) 3 'elt))))
 
 (ert-deftest list-utils-insert-before-09 nil
   "set TEST"
-  (should-error
-   (list-utils-insert-before '(1 2.0 3 4 5) 2 'elt))
+  (let ((debug-on-error nil))
+    (should-error
+     (list-utils-insert-before '(1 2.0 3 4 5) 2 'elt)))
   (should
    (equal '(1 elt 2.0 3 4 5)
           (list-utils-insert-before '(1 2.0 3 4 5) 2 'elt '=))))
@@ -1482,29 +1501,31 @@
                  (list-utils-insert-after '(1 2 3 4 5) 5 'elt))))
 
 (ert-deftest list-utils-insert-after-04 nil
-  (should-error
-   (list-utils-insert-after '(1 2 3 4 5) 6 'elt)))
+  (let ((debug-on-error nil))
+    (should-error
+     (list-utils-insert-after '(1 2 3 4 5) 6 'elt))))
 
 (ert-deftest list-utils-insert-after-05 nil
-  (should (equal (list* 1 'elt 2)
+  (should (equal (cl-list* 1 'elt 2)
                  (list-utils-insert-after (cons 1 2) 1 'elt))))
 
 (ert-deftest list-utils-insert-after-06 nil
-  (should (equal (list* 1 2 'elt)
+  (should (equal (cl-list* 1 2 'elt)
                  (list-utils-insert-after (cons 1 2) 2 'elt))))
 
 (ert-deftest list-utils-insert-after-07 nil
-  (should (equal (list* 1 2 'elt 3)
-                 (list-utils-insert-after (list* 1 2 3) 2 'elt))))
+  (should (equal (cl-list* 1 2 'elt 3)
+                 (list-utils-insert-after (cl-list* 1 2 3) 2 'elt))))
 
 (ert-deftest list-utils-insert-after-08 nil
-  (should (equal (list* 1 2 3 'elt)
-                 (list-utils-insert-after (list* 1 2 3) 3 'elt))))
+  (should (equal (cl-list* 1 2 3 'elt)
+                 (list-utils-insert-after (cl-list* 1 2 3) 3 'elt))))
 
 (ert-deftest list-utils-insert-after-09 nil
   "set TEST"
-  (should-error
-   (list-utils-insert-after '(1 2.0 3 4 5) 2 'elt))
+  (let ((debug-on-error nil))
+    (should-error
+     (list-utils-insert-after '(1 2.0 3 4 5) 2 'elt)))
   (should
    (equal '(1 2.0 elt 3 4 5)
           (list-utils-insert-after '(1 2.0 3 4 5) 2 'elt '=))))
@@ -1525,32 +1546,35 @@
                  (list-utils-insert-before-pos '(a b c d e) 4 'elt))))
 
 (ert-deftest list-utils-insert-before-pos-04 nil
-  (should-error
-   (list-utils-insert-before-pos '(a b c d e) 5 'elt)))
+  (let ((debug-on-error nil))
+    (should-error
+     (list-utils-insert-before-pos '(a b c d e) 5 'elt))))
 
 (ert-deftest list-utils-insert-before-pos-05 nil
-  (should (equal (list* 'elt 1 2)
+  (should (equal (cl-list* 'elt 1 2)
                  (list-utils-insert-before-pos (cons 1 2) 0 'elt))))
 
 (ert-deftest list-utils-insert-before-pos-06 nil
-  (should (equal (list* 1 'elt 2)
+  (should (equal (cl-list* 1 'elt 2)
                  (list-utils-insert-before-pos (cons 1 2) 1 'elt))))
 
 (ert-deftest list-utils-insert-before-pos-07 nil
-  (should-error
-   (list-utils-insert-before-pos (cons 1 2) 2 'elt)))
+  (let ((debug-on-error nil))
+    (should-error
+     (list-utils-insert-before-pos (cons 1 2) 2 'elt))))
 
 (ert-deftest list-utils-insert-before-pos-08 nil
-  (should (equal (list* 1 'elt 2 3)
-                 (list-utils-insert-before-pos (list* 1 2 3) 1 'elt))))
+  (should (equal (cl-list* 1 'elt 2 3)
+                 (list-utils-insert-before-pos (cl-list* 1 2 3) 1 'elt))))
 
 (ert-deftest list-utils-insert-before-pos-09 nil
-  (should (equal (list* 1 2 'elt 3)
-                 (list-utils-insert-before-pos (list* 1 2 3) 2 'elt))))
+  (should (equal (cl-list* 1 2 'elt 3)
+                 (list-utils-insert-before-pos (cl-list* 1 2 3) 2 'elt))))
 
 (ert-deftest list-utils-insert-before-pos-10 nil
-  (should-error
-   (list-utils-insert-before-pos (list* 1 2 3) 3 'elt)))
+  (let ((debug-on-error nil))
+    (should-error
+     (list-utils-insert-before-pos (cl-list* 1 2 3) 3 'elt))))
 
 
 ;;; list-utils-insert-after-pos
@@ -1568,32 +1592,35 @@
                  (list-utils-insert-after-pos '(a b c d e) 4 'elt))))
 
 (ert-deftest list-utils-insert-after-pos-04 nil
-  (should-error
-   (list-utils-insert-after-pos '(a b c d e) 5 'elt)))
+  (let ((debug-on-error nil))
+    (should-error
+     (list-utils-insert-after-pos '(a b c d e) 5 'elt))))
 
 (ert-deftest list-utils-insert-after-pos-05 nil
-  (should (equal (list* 1 'elt 2)
+  (should (equal (cl-list* 1 'elt 2)
                  (list-utils-insert-after-pos (cons 1 2) 0 'elt))))
 
 (ert-deftest list-utils-insert-after-pos-06 nil
-  (should (equal (list* 1 2 'elt)
+  (should (equal (cl-list* 1 2 'elt)
                  (list-utils-insert-after-pos (cons 1 2) 1 'elt))))
 
 (ert-deftest list-utils-insert-after-pos-07 nil
-  (should-error
-   (list-utils-insert-after-pos (cons 1 2) 2 'elt)))
+  (let ((debug-on-error nil))
+    (should-error
+     (list-utils-insert-after-pos (cons 1 2) 2 'elt))))
 
 (ert-deftest list-utils-insert-after-pos-08 nil
-  (should (equal (list* 1 2 'elt 3)
-                 (list-utils-insert-after-pos (list* 1 2 3) 1 'elt))))
+  (should (equal (cl-list* 1 2 'elt 3)
+                 (list-utils-insert-after-pos (cl-list* 1 2 3) 1 'elt))))
 
 (ert-deftest list-utils-insert-after-pos-09 nil
-  (should (equal (list* 1 2 3 'elt)
-                 (list-utils-insert-after-pos (list* 1 2 3) 2 'elt))))
+  (should (equal (cl-list* 1 2 3 'elt)
+                 (list-utils-insert-after-pos (cl-list* 1 2 3) 2 'elt))))
 
 (ert-deftest list-utils-insert-after-pos-10 nil
-  (should-error
-   (list-utils-insert-after-pos (list* 1 2 3) 3 'elt)))
+  (let ((debug-on-error nil))
+    (should-error
+     (list-utils-insert-after-pos (cl-list* 1 2 3) 3 'elt))))
 
 
 ;;; list-utils-and
@@ -2251,8 +2278,9 @@
                  (list-utils-plist-reverse '(:one 1 :two 2 :three 3 :four 4)))))
 
 (ert-deftest list-utils-plist-reverse-02 nil
-  (should-error
-   (list-utils-plist-reverse '(:one 1 :two 2 :three 3 :four))))
+  (let ((debug-on-error nil))
+    (should-error
+     (list-utils-plist-reverse '(:one 1 :two 2 :three 3 :four)))))
 
 (ert-deftest list-utils-plist-reverse-03 nil
   (should (equal '(:four 4 :three 3 :two 2 :one (1 (1 (1))))
