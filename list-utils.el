@@ -1,12 +1,12 @@
 ;;; list-utils.el --- List-manipulation utility functions
 ;;
-;; Copyright (c) 2012-2015 Roland Walker
+;; Copyright (c) 2012-2024 Roland Walker
 ;;
 ;; Author: Roland Walker <walker@pobox.com>
 ;; Homepage: http://github.com/rolandwalker/list-utils
 ;; URL: http://raw.githubusercontent.com/rolandwalker/list-utils/master/list-utils.el
-;; Version: 0.4.6
-;; Last-Updated:  2 May 2020
+;; Version: 0.4.7
+;; Last-Updated:  6 Nov 2024
 ;; EmacsWiki: ListUtils
 ;; Keywords: extensions
 ;;
@@ -173,7 +173,7 @@
 ;;;###autoload
 (defgroup list-utils nil
   "List-manipulation utility functions."
-  :version "0.4.6"
+  :version "0.4.7"
   :link '(emacs-commentary-link :tag "Commentary" "list-utils")
   :link '(url-link :tag "GitHub" "http://github.com/rolandwalker/list-utils")
   :link '(url-link :tag "EmacsWiki" "http://emacswiki.org/emacs/ListUtils")
